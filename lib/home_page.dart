@@ -22,8 +22,9 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           children: [
             Expanded(
+              flex: 3,
               child: Container(
-                color: Colors.lightBlueAccent,
+                color: Colors.blueAccent,
                 child: Column(
                   children: [
                     Row(
@@ -44,7 +45,8 @@ class _HomePageState extends State<HomePage> {
                             ),
                             Text(
                               'Inshad Iqbal',
-                              style: TextStyle(color: Colors.white, fontSize: 15),
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 15),
                             ),
                           ],
                         ),
@@ -58,20 +60,45 @@ class _HomePageState extends State<HomePage> {
                     Text('\$472.00'),
                     Row(
                       children: [
-                        ListTile(
-                          title: Text('Today Cash In'),
-                          trailing: Text('100'),
+                        Card(
+                          child: Text('Today Cash In'),
+                          color: Colors.greenAccent,
                         ),
-                        // ListTile(
-                        //   title: Text('Today Expense'),
-                        //   trailing: Text('50'),
-                        // ),
+                        Card(
+                          child: Text('Today Expense'),
+                          color: Colors.redAccent.shade100,
+                        ),
                       ],
                     ),
                   ],
                 ),
               ),
-            )
+            ),
+            Expanded(
+              flex: 4,
+                child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Tranctions',
+                      style: TextStyle(
+                          color: Colors.black, fontWeight: FontWeight.w800),
+                    ),
+                    Text('Todays')
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Icon(Icons.local_grocery_store,),
+                    Text('Grocery'),
+                    Text('-\$240'),
+                  ],
+                )
+              ],
+            ))
           ],
         ),
       ),
