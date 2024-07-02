@@ -1,40 +1,30 @@
 import 'package:dailyexpensetracker/database.dart';
-import 'package:dailyexpensetracker/expense.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:omni_datetime_picker/omni_datetime_picker.dart';
 
-class AddExpense extends StatefulWidget {
-  static const addExpense = 'AddExpense';
-  AddExpense({super.key});
+class AddIncome extends StatefulWidget {
+  static const addIncome = 'AddIncome';
+  AddIncome({super.key});
 
   @override
-  State<AddExpense> createState() => _AddExpenseState();
+  State<AddIncome> createState() => _AddIncomeState();
 }
 
-class _AddExpenseState extends State<AddExpense> {
+class _AddIncomeState extends State<AddIncome> {
+
   final List<String> _categories = [
-    'Food',
-    'Transport',
-    'Entertainment',
-    'Utilities',
-    'Health',
-    'Other'
+    'Salary',
+    'Credit',
+    'Incentive',
+    'Tip',
+    'Loan',
+    'Profit'
   ];
-  String _selectedCategory = 'Food';
+  String _selectedCategory = 'Salary';
   DateTime? _selectedDateTime;
   var amount;
   final dbHelper = DatabaseHelper();
-
-  void _saveExpense() async {
-    Expense _newExpense = Expense(
-        amount: double.parse(amount),
-        title: _selectedCategory,
-        datetime: _selectedDateTime);
-    await dbHelper.insertExpense(_newExpense);
-    print('Expense saved locally.');
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -103,7 +93,7 @@ class _AddExpenseState extends State<AddExpense> {
           TextButton(
             onPressed: () {
               print(_selectedDateTime);
-              _saveExpense();
+              // _saveExpense();
             },
             child: Text('Save'),
           ),
@@ -111,7 +101,7 @@ class _AddExpenseState extends State<AddExpense> {
             onPressed: () async {
               List<Expense> listExpense = await dbHelper.getExpenses();
               List<Map<String, dynamic>> monthAgg =
-                  await dbHelper.getTodaysExpenses();
+              await dbHelper.getTodaysExpenses();
               print(monthAgg);
             },
             child: Text('Retrieve'),
@@ -165,11 +155,16 @@ class DateTimePickerWidget extends StatelessWidget {
       },
     );
 
+
     if (dateTime != null) {
       // setState(() {
       _selectedDateTime = dateTime;
       // });
       updateDateTime!(_selectedDateTime);
+
+
+
+
     }
   }
 
