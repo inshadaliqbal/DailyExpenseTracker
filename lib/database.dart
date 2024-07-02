@@ -31,6 +31,7 @@ class DatabaseHelper {
         title TEXT,
         amount REAL,
         datetime TEXT
+        amountType TEXT
       )
     ''');
   }
@@ -48,7 +49,8 @@ class DatabaseHelper {
         id: maps[i]['id'],
         title: maps[i]['title'],
         amount: maps[i]['amount'],
-        datetime: DateTime.parse(maps[i]['datetime']),
+        datetime: DateTime.parse(maps[i]['datetime'],
+        ), amountType: maps[i]['amountType'],
       );
     });
   }
@@ -89,6 +91,34 @@ class DatabaseHelper {
     ORDER BY datetime ASC
   ''', [todayString]);
   }
+
+  Future<List<Map<String, dynamic>>> getTodaysSpend() async {
+    Database db = await database;
+    final today = DateTime.now();
+    final todayString = today.toIso8601String().substring(0, 10); // Get 'YYYY-MM-DD'
+
+    return await db.rawQuery('''
+    SELECT * FROM expenses
+    WHERE strftime('%Y-%m-%d', datetime) = ? AND dataType = 'spend'
+    ORDER BY datetime ASC
+  ''', [todayString]);
+  }
+
+  Future<List<Map<String, dynamic>>> getTodaysIncome() async {
+    Database db = await database;
+    final today = DateTime.now();
+    final todayString = today.toIso8601String().substring(0, 10); // Get 'YYYY-MM-DD'
+
+    return await db.rawQuery('''
+    SELECT * FROM expenses
+    WHERE strftime('%Y-%m-%d', datetime) = ? AND dataType = 'income'
+    ORDER BY datetime ASC
+  ''', [todayString]);
+  }
+  Future<void> deleteExpensesTable() async {
+    Database db = await database;
+    await db.execute('DROP TABLE IF EXISTS expenses');
+  }
 }
 
 class Expense {
@@ -103,7 +133,7 @@ class Expense {
       required this.title,
       required this.amount,
       required this.datetime,
-      this.amountType});
+      required this.amountType});
 
   Map<String, dynamic> toMap() {
     return {
@@ -113,4 +143,5 @@ class Expense {
       'datetime': datetime!.toIso8601String(),
     };
   }
+
 }

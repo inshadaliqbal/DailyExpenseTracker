@@ -108,7 +108,6 @@ class _AddIncomeState extends State<AddIncome> {
           ),
           TextButton(
             onPressed: () async {
-              List<Expense> listExpense = await dbHelper.getExpenses();
               List<Map<String, dynamic>> monthAgg =
               await dbHelper.getTodaysExpenses();
               print(monthAgg);
