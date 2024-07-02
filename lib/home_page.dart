@@ -21,6 +21,7 @@ class _HomePageState extends State<HomePage> {
           style: TextStyle(color: Colors.black),
         ),
         backgroundColor: Colors.white,
+        elevation: 0,
       ),
       body: SafeArea(
         child: Column(
@@ -29,13 +30,16 @@ class _HomePageState extends State<HomePage> {
               flex: 3,
               child: Container(
                 color: Colors.blueAccent,
+                padding: EdgeInsets.all(16.0),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         CircleAvatar(
                           radius: 30.0,
+                          backgroundColor: Colors.white.withOpacity(0.1),
                           child: Icon(
                             Icons.supervised_user_circle,
                             color: Colors.white,
@@ -45,12 +49,18 @@ class _HomePageState extends State<HomePage> {
                           children: [
                             Text(
                               'Welcome Back',
-                              style: TextStyle(fontSize: 12),
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.white70,
+                              ),
                             ),
                             Text(
                               'Inshad Iqbal',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 15),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ],
                         ),
@@ -60,17 +70,80 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ],
                     ),
-                    Text('Balance'),
-                    Text('\$472.00'),
+                    SizedBox(height: 20),
+                    Text(
+                      'Balance',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.white70,
+                      ),
+                    ),
+                    Text(
+                      '\$472.00',
+                      style: TextStyle(
+                        fontSize: 36,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 20),
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Card(
-                          child: Text('Today Cash In'),
-                          color: Colors.greenAccent,
+                        Expanded(
+                          child: Card(
+                            color: Colors.greenAccent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                children: [
+                                  Text(
+                                    'Today Cash In',
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                  SizedBox(height: 8),
+                                  Text(
+                                    '\$100.00',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
                         ),
-                        Card(
-                          child: Text('Today Expense'),
-                          color: Colors.redAccent.shade100,
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: Card(
+                            color: Colors.redAccent.shade100,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                children: [
+                                  Text(
+                                    'Today Expense',
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                  SizedBox(height: 8),
+                                  Text(
+                                    '\$50.00',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -80,29 +153,74 @@ class _HomePageState extends State<HomePage> {
             ),
             Expanded(
               flex: 4,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
                 child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Tranctions',
-                      style: TextStyle(
-                          color: Colors.black, fontWeight: FontWeight.w800),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Transactions',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),
+                        ),
+                        Text(
+                          'Today',
+                          style: TextStyle(
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
                     ),
-                    Text('Todays')
+                    SizedBox(height: 10),
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: Provider.of<MainEngine>(context)
+                            .todaysTransactionList
+                            .length,
+                        itemBuilder: (context, index) {
+                          var transaction = Provider.of<MainEngine>(context)
+                              .todaysTransactionList[index];
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              elevation: 2,
+                              child: ListTile(
+                                leading: Icon(
+                                  Icons.local_grocery_store,
+                                  color: Colors.blueAccent,
+                                ),
+                                title: Text(transaction["title"]),
+                                subtitle: Text(
+                                  'Amount: \$${transaction["amount"]}',
+                                ),
+                                trailing: Text(
+                                  '\$${transaction["amount"]}',
+                                  style: TextStyle(
+                                    color: transaction["amount"] > 0
+                                        ? Colors.green
+                                        : Colors.red,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    )
                   ],
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Icon(Icons.local_grocery_store,),
-                    Text(Provider.of<MainEngine>(context).todaysTransactionList[1]["title"]),
-                    Text('-\$240'),
-                  ],
-                )
-              ],
-            ))
+              ),
+            ),
           ],
         ),
       ),

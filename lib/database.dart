@@ -80,7 +80,8 @@ class DatabaseHelper {
   Future<List<Map<String, dynamic>>> getTodaysExpenses() async {
     Database db = await database;
     final today = DateTime.now();
-    final todayString = today.toIso8601String().substring(0, 10); // Get 'YYYY-MM-DD'
+    final todayString =
+        today.toIso8601String().substring(0, 10); // Get 'YYYY-MM-DD'
 
     return await db.rawQuery('''
     SELECT * FROM expenses
@@ -88,7 +89,6 @@ class DatabaseHelper {
     ORDER BY datetime ASC
   ''', [todayString]);
   }
-
 }
 
 class Expense {
@@ -96,17 +96,20 @@ class Expense {
   final String? title;
   final double? amount;
   final DateTime? datetime;
+  final String? amountType;
 
   Expense(
       {this.id,
       required this.title,
       required this.amount,
-      required this.datetime});
+      required this.datetime,
+      this.amountType});
 
   Map<String, dynamic> toMap() {
     return {
       'title': title,
       'amount': amount,
+      'amountType': amountType,
       'datetime': datetime!.toIso8601String(),
     };
   }

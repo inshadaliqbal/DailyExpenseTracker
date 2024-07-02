@@ -30,7 +30,8 @@ class _AddExpenseState extends State<AddExpense> {
     Expense _newExpense = Expense(
         amount: double.parse(amount),
         title: _selectedCategory,
-        datetime: _selectedDateTime);
+        datetime: _selectedDateTime,
+        amountType: 'spend');
     await dbHelper.insertExpense(_newExpense);
     print('Expense saved locally.');
   }

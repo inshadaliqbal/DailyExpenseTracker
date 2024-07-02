@@ -25,6 +25,15 @@ class _AddIncomeState extends State<AddIncome> {
   DateTime? _selectedDateTime;
   var amount;
   final dbHelper = DatabaseHelper();
+  void _saveExpense() async {
+    Expense _newExpense = Expense(
+        amount: double.parse(amount),
+        title: _selectedCategory,
+        datetime: _selectedDateTime,
+        amountType: 'income');
+    await dbHelper.insertExpense(_newExpense);
+    print('Expense saved locally.');
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -93,7 +102,7 @@ class _AddIncomeState extends State<AddIncome> {
           TextButton(
             onPressed: () {
               print(_selectedDateTime);
-              // _saveExpense();
+              _saveExpense();
             },
             child: Text('Save'),
           ),
