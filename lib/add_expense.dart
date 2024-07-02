@@ -5,14 +5,14 @@ import 'package:flutter/services.dart';
 import 'package:omni_datetime_picker/omni_datetime_picker.dart';
 
 
-class MainFunctionality extends StatefulWidget {
-  MainFunctionality({super.key});
+class AddExpense extends StatefulWidget {
+  AddExpense({super.key});
 
   @override
-  State<MainFunctionality> createState() => _MainFunctionalityState();
+  State<AddExpense> createState() => _AddExpenseState();
 }
 
-class _MainFunctionalityState extends State<MainFunctionality> {
+class _AddExpenseState extends State<AddExpense> {
   final List<String> _categories = [
     'Food',
     'Transport',
@@ -111,7 +111,7 @@ class _MainFunctionalityState extends State<MainFunctionality> {
             TextButton(
               onPressed: () async{
                 List<Expense> listExpense = await dbHelper.getExpenses();
-                List<Map<String, dynamic>> monthAgg  = await dbHelper.getExpensesGroupedByWeek();
+                List<Map<String, dynamic>> monthAgg  = await dbHelper.getTodaysExpenses();
                 print(monthAgg);
               },
               child: Text('Retrieve'),
@@ -172,6 +172,8 @@ class DateTimePickerWidget extends StatelessWidget {
       _selectedDateTime = dateTime;
       // });
       updateDateTime!(_selectedDateTime);
+
+
 
 
     }

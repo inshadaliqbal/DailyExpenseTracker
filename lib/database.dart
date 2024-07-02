@@ -77,6 +77,18 @@ class DatabaseHelper {
   ''');
   }
 
+  Future<List<Map<String, dynamic>>> getTodaysExpenses() async {
+    Database db = await database;
+    final today = DateTime.now();
+    final todayString = today.toIso8601String().substring(0, 10); // Get 'YYYY-MM-DD'
+
+    return await db.rawQuery('''
+    SELECT * FROM expenses
+    WHERE strftime('%Y-%m-%d', datetime) = ?
+    ORDER BY datetime ASC
+  ''', [todayString]);
+  }
+
 }
 
 class Expense {

@@ -1,14 +1,15 @@
+import 'package:dailyexpensetracker/bottombar.dart';
 import 'package:dailyexpensetracker/database.dart';
 import 'package:dailyexpensetracker/expense.dart';
 import 'package:dailyexpensetracker/home_page.dart';
+import 'package:dailyexpensetracker/provider_engine.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:omni_datetime_picker/omni_datetime_picker.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(DailyExpenseTracker(
-
-  ));
+  runApp(DailyExpenseTracker());
 }
 
 class DailyExpenseTracker extends StatelessWidget {
@@ -16,8 +17,12 @@ class DailyExpenseTracker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: HomePage(),
-    );
+    return ChangeNotifierProvider(
+        create: (context) => MainEngine(),
+        builder: (context, MainEngine) {
+          return MaterialApp(
+            home: BottomBar(),
+          );
+        });
   }
 }

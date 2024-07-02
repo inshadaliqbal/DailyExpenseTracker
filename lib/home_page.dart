@@ -1,4 +1,6 @@
+import 'package:dailyexpensetracker/provider_engine.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -93,7 +95,7 @@ class _HomePageState extends State<HomePage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Icon(Icons.local_grocery_store,),
-                    Text('Grocery'),
+                    Text(Provider.of<MainEngine>(context).todaysTransactionList[1]["title"]),
                     Text('-\$240'),
                   ],
                 )
