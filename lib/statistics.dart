@@ -17,6 +17,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
   Widget currentChart = BarChartWidget();
   @override
   Widget build(BuildContext context) {
+    var expenseListFunction = dbHelper.getWeeklyExpensesAndIncomeForLast7DaysList();
     return Scaffold(
       appBar: AppBar(
         title: Text('Expense'),
@@ -30,7 +31,25 @@ class _StatisticsPageState extends State<StatisticsPage> {
               GestureDetector(
                 onTap: () {
                   setState(() {
+                    currentChart = BarChartDaily();
+                    expenseListFunction = dbHelper.getWeeklyExpensesAndIncomeForLast7DaysList();
+                  });
+                },
+                child: Container(
+                  color: Colors.black,
+                  margin: EdgeInsets.all(5),
+                  child: Text(
+                    'Daily',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    expenseListFunction = dbHelper.getWeeklyExpensesAndIncomeList(DateTime.now().year, DateTime.now().month);
                     currentChart = BarChartWidget();
+
                   });
                 },
                 child: Container(
@@ -44,8 +63,10 @@ class _StatisticsPageState extends State<StatisticsPage> {
               ),
               GestureDetector(
                 onTap: () {
+                  expenseListFunction = dbHelper.getMonthlyExpensesAndIncomeList(DateTime.now().year);
                   setState(() {
                     currentChart = BarChartMonthly(year: 2024);
+
                   });
                 },
                 child: Container(
@@ -70,7 +91,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
             ],
           ),
           Container(height: 300, width: 400, child: currentChart),
-          ExpenseList(inputFunction: dbHelper.getWeeklyExpensesAndIncomeList(2024, 7))
+          ExpenseList(inputFunction: expenseListFunction)
         ],
       ),
     );
@@ -245,6 +266,68 @@ class BarChartMonthly extends StatelessWidget {
                     AxisTitles(sideTitles: SideTitles(showTitles: true)),
                 bottomTitles:
                     AxisTitles(sideTitles: SideTitles(showTitles: true)),
+              ),
+              borderData: FlBorderData(show: false),
+            ),
+          );
+        }
+      },
+    );
+  }
+}
+
+class BarChartDaily extends StatelessWidget {
+  final dbHelper = DatabaseHelper();
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: dbHelper.getDailyExpensesAndIncomeForLast7Days(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return Center(child: Text('No data available'));
+        } else {
+          List<Map<String, dynamic>> data = snapshot.data!;
+          return BarChart(
+            BarChartData(
+              barGroups: data.map((dayData) {
+                double totalExpenses =
+                (dayData['totalExpenses'] as num).toDouble();
+                double totalIncome =
+                (dayData['totalIncome'] as num).toDouble();
+                String day = dayData['day'].split('-')[2];
+
+                return BarChartGroupData(
+                  x: int.parse(day),
+                  barRods: [
+                    BarChartRodData(
+                      toY: totalExpenses,
+                      color: Colors.red,
+                      width: 15,
+                    ),
+                    BarChartRodData(
+                      toY: totalIncome,
+                      color: Colors.green,
+                      width: 15,
+                    ),
+                  ],
+                );
+              }).toList(),
+              titlesData: FlTitlesData(
+                leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: true)),
+                bottomTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    getTitlesWidget: (value, meta) {
+                      String day = value.toInt().toString().padLeft(2, '0');
+                      return Text(day);
+                    },
+                  ),
+                ),
               ),
               borderData: FlBorderData(show: false),
             ),

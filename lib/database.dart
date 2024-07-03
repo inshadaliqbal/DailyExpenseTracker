@@ -103,6 +103,41 @@ class DatabaseHelper {
     ORDER BY datetime ASC
   ''', [todayString]);
   }
+  Future<double> getTodaysTotalSpending() async {
+    Database db = await database;
+    final today = DateTime.now();
+    final todayString = today.toIso8601String().substring(0, 10); // Get 'YYYY-MM-DD'
+
+    List<Map<String, dynamic>> spendExpenses = await db.rawQuery('''
+    SELECT amount FROM expense
+    WHERE strftime('%Y-%m-%d', datetime) = ? AND amountType = 'spend'
+    ORDER BY datetime ASC
+  ''', [todayString]);
+
+    double totalSpending = spendExpenses.fold(0, (previousValue, expense) {
+      return previousValue + (expense['amount'] as num).toDouble();
+    });
+
+    return totalSpending;
+  }
+
+  Future<double> getTodaysTotalIncome() async {
+    Database db = await database;
+    final today = DateTime.now();
+    final todayString = today.toIso8601String().substring(0, 10); // Get 'YYYY-MM-DD'
+
+    List<Map<String, dynamic>> incomeExpenses = await db.rawQuery('''
+    SELECT amount FROM expense
+    WHERE strftime('%Y-%m-%d', datetime) = ? AND amountType = 'income'
+    ORDER BY datetime ASC
+  ''', [todayString]);
+
+    double totalIncome = incomeExpenses.fold(0, (previousValue, income) {
+      return previousValue + (income['amount'] as num).toDouble();
+    });
+
+    return totalIncome;
+  }
 
   Future<List<Map<String, dynamic>>> getTodaysIncome() async {
     Database db = await database;
@@ -156,6 +191,36 @@ class DatabaseHelper {
   ''', [year.toString(), month.toString().padLeft(2, '0')]);
   }
 
+  Future<List<Map<String, dynamic>>> getWeeklyExpensesAndIncomeForLast7DaysList() async {
+    Database db = await database;
+    return await db.rawQuery('''
+    SELECT 
+      strftime('%Y-%W', datetime) AS week,
+      title,
+      amountType,
+      amount
+    FROM expense
+    WHERE datetime >= date('now', '-7 days')
+    ORDER BY week ASC
+  ''');
+  }
+
+
+  Future<List<Map<String, dynamic>>> getDailyExpensesAndIncomeForLast7Days() async {
+    Database db = await database;
+    return await db.rawQuery('''
+    SELECT 
+      strftime('%Y-%m-%d', datetime) AS day,
+      SUM(CASE WHEN amountType = 'spend' THEN amount ELSE 0 END) AS totalExpenses,
+      SUM(CASE WHEN amountType = 'income' THEN amount ELSE 0 END) AS totalIncome
+    FROM expense
+    WHERE datetime >= date('now', '-7 days')
+    GROUP BY day
+    ORDER BY day ASC
+  ''');
+  }
+
+
   Future<List<Map<String, dynamic>>> getWeeklyExpensesAndIncome(int year, int month) async {
     Database db = await database;
     return await db.rawQuery('''
@@ -170,6 +235,21 @@ class DatabaseHelper {
     ''', [year.toString(), month.toString().padLeft(2, '0')]);
   }
 
+  Future<List<Map<String, dynamic>>> getMonthlyExpensesAndIncomeList(int year) async {
+    Database db = await database;
+    return await db.rawQuery('''
+    SELECT 
+      strftime('%Y-%m', datetime) AS month,
+      title,
+      amountType,
+      amount
+    FROM expense
+    WHERE strftime('%Y', datetime) = ?
+    ORDER BY month ASC
+  ''', [year.toString()]);
+  }
+
+
   Future<List<Map<String, dynamic>>> getMonthlyExpensesAndIncome(int year) async {
     Database db = await database;
     return await db.rawQuery('''
@@ -183,6 +263,24 @@ class DatabaseHelper {
     ORDER BY month ASC
   ''', [year.toString()]);
   }
+
+  Future<double> getTotalMoneyForCurrentMonth() async {
+    Database db = await database;
+    List<Map<String, dynamic>> result = await db.rawQuery('''
+    SELECT 
+      SUM(CASE WHEN amountType = 'income' THEN amount ELSE 0 END) - 
+      SUM(CASE WHEN amountType = 'spend' THEN amount ELSE 0 END) AS totalMoney
+    FROM expense
+    WHERE strftime('%Y-%m', datetime) = strftime('%Y-%m', 'now')
+  ''');
+
+    if (result.isNotEmpty && result.first['totalMoney'] != null) {
+      return (result.first['totalMoney'] as num).toDouble();
+    } else {
+      return 0.0;
+    }
+  }
+
 
 
 

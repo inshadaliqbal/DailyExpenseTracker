@@ -12,7 +12,15 @@ import 'package:omni_datetime_picker/omni_datetime_picker.dart';
 import 'package:provider/provider.dart';
 
 void main() {
-  runApp(DailyExpenseTracker());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => DashboardProvider()),
+        ChangeNotifierProvider(create: (_) => MainEngine()),
+      ],
+      child: DailyExpenseTracker(),
+    ),
+  );
 }
 
 class DailyExpenseTracker extends StatelessWidget {
@@ -26,7 +34,7 @@ class DailyExpenseTracker extends StatelessWidget {
           return MaterialApp(
             initialRoute: BottomBar.bottomBar,
             routes: {
-              HomePage.homePage:(context)=> HomePage(),
+              HomePage.homePage: (context) => HomePage(),
               BottomBar.bottomBar: (context) => BottomBar(),
               AddExpense.addExpense: (context) => AddExpense(),
               AddIncome.addIncome: (context) => AddIncome(),
