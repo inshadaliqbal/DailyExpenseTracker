@@ -1,8 +1,10 @@
 import 'package:dailyexpensetracker/database.dart';
 import 'package:dailyexpensetracker/expense.dart';
+import 'package:dailyexpensetracker/provider_engine.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:omni_datetime_picker/omni_datetime_picker.dart';
+import 'package:provider/provider.dart';
 
 class AddExpense extends StatefulWidget {
   static const addExpense = 'AddExpense';
@@ -105,6 +107,7 @@ class _AddExpenseState extends State<AddExpense> {
             onPressed: () {
               print(_selectedDateTime);
               _saveExpense();
+              Provider.of<MainEngine>(context,listen: false).todaysSpend();
             },
             child: Text('Save'),
           ),
@@ -112,7 +115,7 @@ class _AddExpenseState extends State<AddExpense> {
             onPressed: () async {
               List<Expense> listExpense = await dbHelper.getExpenses();
               List<Map<String, dynamic>> monthAgg =
-                  await dbHelper.getTodaysExpenses();
+                  await dbHelper.getTodaysSpend();
               print(monthAgg);
             },
             child: Text('Retrieve'),

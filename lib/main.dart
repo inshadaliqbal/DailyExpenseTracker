@@ -5,6 +5,7 @@ import 'package:dailyexpensetracker/database.dart';
 import 'package:dailyexpensetracker/expense.dart';
 import 'package:dailyexpensetracker/home_page.dart';
 import 'package:dailyexpensetracker/provider_engine.dart';
+import 'package:dailyexpensetracker/statistics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:omni_datetime_picker/omni_datetime_picker.dart';
@@ -28,7 +29,8 @@ class DailyExpenseTracker extends StatelessWidget {
               HomePage.homePage:(context)=> HomePage(),
               BottomBar.bottomBar: (context) => BottomBar(),
               AddExpense.addExpense: (context) => AddExpense(),
-              AddIncome.addIncome: (context) => AddIncome()
+              AddIncome.addIncome: (context) => AddIncome(),
+              StatisticsPage.statisticPage: (context) => StatisticsPage()
             },
           );
         });

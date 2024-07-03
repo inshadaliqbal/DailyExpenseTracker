@@ -134,7 +134,7 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                   SizedBox(height: 8),
                                   Text(
-                                    '\$ ${Provider.of<MainEngine>(context).todaysSpend()}',
+                                    '\$ ${Provider.of<MainEngine>(context).todaysSpendValue}',
                                     style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,

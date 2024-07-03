@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 class MainEngine extends ChangeNotifier{
   final dbHelper = DatabaseHelper();
   var todaysTransactionList;
+  var todaysSpendValue;
 
   void todaysTransaction() async {
     await dbHelper.database;
@@ -12,13 +13,12 @@ class MainEngine extends ChangeNotifier{
     notifyListeners();
   }
 
-  Future<double?> todaysSpend() async {
-    double? todaysSpendValue;
+  void todaysSpend() async {
+    todaysSpendValue = 0;
     var todaysSpend = await dbHelper.getTodaysSpend();
     for(Map<String,dynamic> i in todaysSpend){
       todaysSpendValue = todaysSpendValue !+ i['amount'];
     }
-    print(todaysSpendValue);
-    return todaysSpendValue;
+    notifyListeners();
   }
 }
