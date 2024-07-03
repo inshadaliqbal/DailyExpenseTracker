@@ -1,6 +1,8 @@
 import 'package:dailyexpensetracker/database.dart';
+import 'package:dailyexpensetracker/provider_engine.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:provider/provider.dart';
 
 class StatisticsPage extends StatefulWidget {
   static const statisticPage = 'StatisticPage';
@@ -11,44 +13,129 @@ class StatisticsPage extends StatefulWidget {
 }
 
 class _StatisticsPageState extends State<StatisticsPage> {
+  final dbHelper = DatabaseHelper();
+  Widget currentChart = BarChartWidget();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Expense'),backgroundColor: Colors.white,),
+      appBar: AppBar(
+        title: Text('Expense'),
+        backgroundColor: Colors.white,
+      ),
       backgroundColor: Colors.white,
       body: Column(
         children: [
           Row(
             children: [
               GestureDetector(
+                onTap: () {
+                  setState(() {
+                    currentChart = BarChartWidget();
+                  });
+                },
                 child: Container(
                   color: Colors.black,
                   margin: EdgeInsets.all(5),
-                  child: Text('Weekly',style: TextStyle(color: Colors.white),),
+                  child: Text(
+                    'Weekly',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    currentChart = BarChartMonthly(year: 2024);
+                  });
+                },
+                child: Container(
+                  color: Colors.black,
+                  margin: EdgeInsets.all(5),
+                  child: Text(
+                    'Monthly',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ),
               GestureDetector(
                 child: Container(
                   color: Colors.black,
                   margin: EdgeInsets.all(5),
-                  child: Text('Monthly',style: TextStyle(color: Colors.white),),
-                ),
-              ),
-              GestureDetector(
-                child: Container(
-                  color: Colors.black,
-                  margin: EdgeInsets.all(5),
-                  child: Text('Yearly',style: TextStyle(color: Colors.white),),
+                  child: Text(
+                    'Yearly',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               )
             ],
           ),
-          Container(
-              height: 300,
-              width: 400,
-              child: BarChartWidget())
+          Container(height: 300, width: 400, child: currentChart),
+          ExpenseList(inputFunction: dbHelper.getWeeklyExpensesAndIncomeList(2024, 7))
         ],
       ),
+    );
+  }
+}
+
+class ExpenseList extends StatelessWidget {
+  Future<List<Map<String,dynamic>>> inputFunction;
+  final dbHelper = DatabaseHelper();
+  ExpenseList({super.key, required this.inputFunction});
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: Provider.of<MainEngine>(context).expenseList(inputFunction),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return Center(child: Text('No data available'));
+        } else {
+          List<Map<String, dynamic>> data = snapshot.data!;
+          print(data);
+          return Expanded(
+            child: ListView.builder(
+              itemCount: data
+                  .length,
+              itemBuilder: (context, index) {
+                var transaction = data[index];
+                print(transaction);
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    elevation: 2,
+                    child: ListTile(
+                      leading: Icon(
+                        Icons.local_grocery_store,
+                        color: Colors.blueAccent,
+                      ),
+                      title: Text(transaction["title"]),
+                      subtitle: Text(
+                        'Amount: \$${transaction["amount"]}',
+                      ),
+                      trailing: Text(
+                        '\$${transaction["amount"]}',
+                        style: TextStyle(
+                          color: transaction["amount"] > 0
+                              ? Colors.green
+                              : Colors.red,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          );
+        }
+      },
     );
   }
 }
@@ -73,7 +160,8 @@ class BarChartWidget extends StatelessWidget {
           return BarChart(
             BarChartData(
               barGroups: data.map((weekData) {
-                double totalExpenses = (weekData['totalExpenses'] as num).toDouble();
+                double totalExpenses =
+                    (weekData['totalExpenses'] as num).toDouble();
                 double totalIncome = (weekData['totalIncome']).toDouble();
                 int week = int.parse(weekData['week'].split('-')[1]);
 
@@ -94,8 +182,69 @@ class BarChartWidget extends StatelessWidget {
                 );
               }).toList(),
               titlesData: FlTitlesData(
-                leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: true)),
-                bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: true)),
+                leftTitles:
+                    AxisTitles(sideTitles: SideTitles(showTitles: true)),
+                bottomTitles:
+                    AxisTitles(sideTitles: SideTitles(showTitles: true)),
+              ),
+              borderData: FlBorderData(show: false),
+            ),
+          );
+        }
+      },
+    );
+  }
+}
+
+class BarChartMonthly extends StatelessWidget {
+  final int year;
+  final dbHelper = DatabaseHelper();
+
+  BarChartMonthly({required this.year});
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: dbHelper.getMonthlyExpensesAndIncome(year),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return Center(child: Text('No data available'));
+        } else {
+          List<Map<String, dynamic>> data = snapshot.data!;
+          return BarChart(
+            BarChartData(
+              barGroups: data.map((monthData) {
+                double totalExpenses =
+                    (monthData['totalExpenses'] as num).toDouble();
+                double totalIncome =
+                    (monthData['totalIncome'] as num).toDouble();
+                int month = int.parse(monthData['month'].split('-')[1]);
+
+                return BarChartGroupData(
+                  x: month,
+                  barRods: [
+                    BarChartRodData(
+                      toY: totalExpenses,
+                      color: Colors.red,
+                      width: 15,
+                    ),
+                    BarChartRodData(
+                      toY: totalIncome,
+                      color: Colors.green,
+                      width: 15,
+                    ),
+                  ],
+                );
+              }).toList(),
+              titlesData: FlTitlesData(
+                leftTitles:
+                    AxisTitles(sideTitles: SideTitles(showTitles: true)),
+                bottomTitles:
+                    AxisTitles(sideTitles: SideTitles(showTitles: true)),
               ),
               borderData: FlBorderData(show: false),
             ),

@@ -120,28 +120,41 @@ class DatabaseHelper {
     await db.execute('DROP TABLE IF EXISTS expenses');
   }
 
-  Future<List<Map<String, dynamic>>> getExpensesWeekly(int year, int month) async {
+  // Future<List<Map<String, dynamic>>> getExpensesWeekly(int year, int month) async {
+  //   Database db = await database;
+  //   return await db.rawQuery('''
+  //   SELECT
+  //     id, title, amount, datetime, amountType
+  //   FROM expenses
+  //   WHERE strftime('%Y', datetime) = ? AND strftime('%m', datetime) = ? AND amountType = 'spend'
+  //   ORDER BY datetime ASC
+  // ''', [year.toString(), month.toString().padLeft(2, '0')]);
+  // }
+  //
+  // Future<List<Map<String, dynamic>>> getIncomeWeekly(int year, int month) async {
+  //   Database db = await database;
+  //   return await db.rawQuery('''
+  //   SELECT
+  //     id, title, amount, datetime, amountType
+  //   FROM expenses
+  //   WHERE strftime('%Y', datetime) = ? AND strftime('%m', datetime) = ? AND amountType = 'income'
+  //   ORDER BY datetime ASC
+  // ''', [year.toString(), month.toString().padLeft(2, '0')]);
+  // }
+
+  Future<List<Map<String, dynamic>>> getWeeklyExpensesAndIncomeList(int year, int month) async {
     Database db = await database;
     return await db.rawQuery('''
     SELECT 
-      id, title, amount, datetime, amountType
-    FROM expenses
-    WHERE strftime('%Y', datetime) = ? AND strftime('%m', datetime) = ? AND amountType = 'spend'
-    ORDER BY datetime ASC
+      strftime('%Y-%W', datetime) AS week,
+      title,
+      amountType,
+      amount
+    FROM expense
+    WHERE strftime('%Y', datetime) = ? AND strftime('%m', datetime) = ?
+    ORDER BY week ASC
   ''', [year.toString(), month.toString().padLeft(2, '0')]);
   }
-
-  Future<List<Map<String, dynamic>>> getIncomeWeekly(int year, int month) async {
-    Database db = await database;
-    return await db.rawQuery('''
-    SELECT 
-      id, title, amount, datetime, amountType
-    FROM expenses
-    WHERE strftime('%Y', datetime) = ? AND strftime('%m', datetime) = ? AND amountType = 'income'
-    ORDER BY datetime ASC
-  ''', [year.toString(), month.toString().padLeft(2, '0')]);
-  }
-
 
   Future<List<Map<String, dynamic>>> getWeeklyExpensesAndIncome(int year, int month) async {
     Database db = await database;
@@ -164,7 +177,7 @@ class DatabaseHelper {
       strftime('%Y-%m', datetime) AS month,
       SUM(CASE WHEN amountType = 'spend' THEN amount ELSE 0 END) AS totalExpenses,
       SUM(CASE WHEN amountType = 'income' THEN amount ELSE 0 END) AS totalIncome
-    FROM expenses
+    FROM expense
     WHERE strftime('%Y', datetime) = ?
     GROUP BY month
     ORDER BY month ASC

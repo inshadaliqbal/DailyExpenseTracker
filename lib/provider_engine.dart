@@ -21,4 +21,10 @@ class MainEngine extends ChangeNotifier{
     }
     notifyListeners();
   }
+
+  Future<List<Map<String,dynamic>>> expenseList(Future<List<Map<String, dynamic>>> inputFunction) async {
+    print(inputFunction);
+    List<Map<String,dynamic>> expenseList = await inputFunction;
+    return expenseList;
+  }
 }
