@@ -36,6 +36,16 @@ class DatabaseHelper {
     ''');
   }
 
+  Future<void> deleteRow(String datetime, double amount) async {
+    Database db = await database;
+    await db.delete(
+      tableName,
+      where: 'datetime = ? AND amount = ?',
+      whereArgs: [datetime, amount],
+    );
+  }
+
+
   Future<int> insertExpense(Expense expense) async {
     Database db = await database;
     return await db.insert(tableName, expense.toMap());
@@ -53,30 +63,6 @@ class DatabaseHelper {
         ), amountType: maps[i]['amountType'],
       );
     });
-  }
-
-  Future<List<Map<String, dynamic>>> getExpensesGroupedByMonth() async {
-    Database db = await database;
-    return await db.rawQuery('''
-    SELECT strftime('%Y', datetime) AS year, strftime('%m', datetime) AS month, SUM(amount) AS total
-    FROM expense
-    GROUP BY year, month
-    ORDER BY year DESC, month DESC
-  ''');
-  }
-
-  Future<List<Map<String, dynamic>>> getExpensesGroupedByWeek() async {
-    Database db = await database;
-    return await db.rawQuery('''
-    SELECT 
-      strftime('%Y', datetime) AS year,
-      strftime('%m', datetime) AS month,
-      strftime('%W', datetime) AS week,
-      SUM(amount) AS total
-    FROM expense
-    GROUP BY year, month, week
-    ORDER BY year DESC, month DESC, week DESC
-  ''');
   }
 
   Future<List<Map<String, dynamic>>> getTodaysExpenses() async {
@@ -155,27 +141,7 @@ class DatabaseHelper {
     await db.execute('DROP TABLE IF EXISTS expenses');
   }
 
-  // Future<List<Map<String, dynamic>>> getExpensesWeekly(int year, int month) async {
-  //   Database db = await database;
-  //   return await db.rawQuery('''
-  //   SELECT
-  //     id, title, amount, datetime, amountType
-  //   FROM expenses
-  //   WHERE strftime('%Y', datetime) = ? AND strftime('%m', datetime) = ? AND amountType = 'spend'
-  //   ORDER BY datetime ASC
-  // ''', [year.toString(), month.toString().padLeft(2, '0')]);
-  // }
-  //
-  // Future<List<Map<String, dynamic>>> getIncomeWeekly(int year, int month) async {
-  //   Database db = await database;
-  //   return await db.rawQuery('''
-  //   SELECT
-  //     id, title, amount, datetime, amountType
-  //   FROM expenses
-  //   WHERE strftime('%Y', datetime) = ? AND strftime('%m', datetime) = ? AND amountType = 'income'
-  //   ORDER BY datetime ASC
-  // ''', [year.toString(), month.toString().padLeft(2, '0')]);
-  // }
+
 
   Future<List<Map<String, dynamic>>> getWeeklyExpensesAndIncomeList(int year, int month) async {
     Database db = await database;
@@ -198,6 +164,7 @@ class DatabaseHelper {
       strftime('%Y-%W', datetime) AS week,
       title,
       amountType,
+      datetime,
       amount
     FROM expense
     WHERE datetime >= date('now', '-7 days')
@@ -219,6 +186,7 @@ class DatabaseHelper {
     ORDER BY day ASC
   ''');
   }
+
 
 
   Future<List<Map<String, dynamic>>> getWeeklyExpensesAndIncome(int year, int month) async {

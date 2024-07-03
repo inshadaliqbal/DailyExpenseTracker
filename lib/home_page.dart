@@ -207,6 +207,7 @@ class _HomePageState extends State<HomePage> {
                             itemCount: Provider.of<MainEngine>(context).todaysTransactionList.length,
                             itemBuilder: (context, index) {
                               var transaction = Provider.of<MainEngine>(context).todaysTransactionList[index];
+                              print(transaction["datetime"]);
                               bool isIncome = transaction["amountType"] == 'income';
                               bool isSpend = transaction["amountType"] == 'spend';
                               bool isPositive = transaction["amount"] >= 0;
@@ -232,7 +233,7 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                     ),
                                     subtitle: Text(
-                                      'Amount: \$${transaction["amount"].abs().toStringAsFixed(2)}', // Display absolute value
+                                      'Time: ${DateTime.parse(transaction["datetime"]).hour} : ${DateTime.parse(transaction["datetime"]).minute}', // Display absolute value
                                       style: TextStyle(
                                         fontSize: 14,
                                       ),

@@ -19,11 +19,14 @@ class _StatisticsPageState extends State<StatisticsPage> {
 
   @override
   Widget build(BuildContext context) {
+    var currentExpenseListFunc =
+        dbHelper.getWeeklyExpensesAndIncomeForLast7DaysList();
     return Scaffold(
       appBar: AppBar(
         title: Text('Expense Statistics'),
         backgroundColor: Colors.white,
-        iconTheme: IconThemeData(color: Colors.black), // Adjust app bar icon color
+        iconTheme:
+            IconThemeData(color: Colors.black), // Adjust app bar icon color
       ),
       backgroundColor: Colors.white,
       body: Column(
@@ -37,6 +40,8 @@ class _StatisticsPageState extends State<StatisticsPage> {
                   onTap: () {
                     setState(() {
                       currentChart = BarChartDaily();
+                      currentExpenseListFunc =
+                          dbHelper.getWeeklyExpensesAndIncomeForLast7DaysList();
                     });
                   },
                   child: Container(
@@ -55,6 +60,8 @@ class _StatisticsPageState extends State<StatisticsPage> {
                   onTap: () {
                     setState(() {
                       currentChart = BarChartWidget();
+                      currentExpenseListFunc =
+                          dbHelper.getWeeklyExpensesAndIncomeForLast7DaysList();
                     });
                   },
                   child: Container(
@@ -73,6 +80,8 @@ class _StatisticsPageState extends State<StatisticsPage> {
                   onTap: () {
                     setState(() {
                       currentChart = BarChartMonthly(year: DateTime.now().year);
+                      currentExpenseListFunc = dbHelper
+                          .getMonthlyExpensesAndIncomeList(DateTime.now().year);
                     });
                   },
                   child: Container(
@@ -87,24 +96,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                     ),
                   ),
                 ),
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      currentChart = BarChartWidget(); // Update with Yearly chart logic
-                    });
-                  },
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                    decoration: BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      'Yearly',
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
-                  ),
-                ),
+
               ],
             ),
           ),
@@ -115,7 +107,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
               child: currentChart,
             ),
           ),
-          ExpenseList(inputFunction: dbHelper.getWeeklyExpensesAndIncomeList(DateTime.now().year, DateTime.now().month)),
+          ExpenseList(inputFunction: currentExpenseListFunc),
         ],
       ),
     );
@@ -130,7 +122,7 @@ class ExpenseList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: Provider.of<MainEngine>(context).expenseList(inputFunction),
+      future: inputFunction,
       builder: (context, AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
@@ -145,37 +137,50 @@ class ExpenseList extends StatelessWidget {
               itemCount: data.length,
               itemBuilder: (context, index) {
                 var transaction = data[index];
+                bool isIncome = transaction["amountType"] == 'income';
+                IconData arrowIcon = isIncome ? Icons.arrow_upward : Icons.arrow_downward;
+                Color amountColor = isIncome ? Colors.green : Colors.red;
+                double amountValue = transaction["amount"] * (isIncome ? 1 : -1);
+
                 return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    color: Colors.white,
-                    elevation: 2,
-                    child: ListTile(
-                      leading: Icon(
-                        Icons.attach_money,
-                        color: Colors.black,
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 8.0, horizontal: 16.0),
+                  child: GestureDetector(
+                    onLongPress: (){
+                      Provider.of<MainEngine>(context,listen: false).deleteExpense(transaction['datetime'], transaction['amount']);
+                    },
+
+
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                      title: Text(
-                        transaction["title"],
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      elevation: 2,
+                      child: ListTile(
+                        leading: Icon(
+                          arrowIcon,
+                          color: amountColor,
                         ),
-                      ),
-                      subtitle: Text(
-                        'Amount: \$${transaction["amount"]}',
-                        style: TextStyle(
-                          color: Colors.grey[700],
+                        title: Text(
+                          transaction["title"],
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      trailing: Text(
-                        '\$${transaction["amount"]}',
-                        style: TextStyle(
-                          color: transaction["amount"] > 0 ? Colors.green : Colors.red,
-                          fontWeight: FontWeight.bold,
+                        subtitle: Text(
+                          'Date: ${DateTime.parse(transaction["datetime"]).day}/${DateTime.parse(transaction["datetime"]).month}',
+                          style: TextStyle(
+                            color: Colors.grey[700],
+                          ),
+                        ),
+                        trailing: Text(
+                          '${amountValue.toStringAsFixed(2)}',
+                          style: TextStyle(
+                            color: amountColor,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
@@ -197,7 +202,8 @@ class BarChartWidget extends StatelessWidget {
     final dbHelper = DatabaseHelper();
 
     return FutureBuilder<List<Map<String, dynamic>>>(
-      future: dbHelper.getWeeklyExpensesAndIncome(2024, 7), // Example year and month
+      future: dbHelper.getWeeklyExpensesAndIncome(
+          2024, 7), // Example year and month
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
@@ -211,8 +217,10 @@ class BarChartWidget extends StatelessWidget {
           return BarChart(
             BarChartData(
               barGroups: data.map((weekData) {
-                double totalExpenses = (weekData['totalExpenses'] as num).toDouble();
-                double totalIncome = (weekData['totalIncome'] as num).toDouble();
+                double totalExpenses =
+                    (weekData['totalExpenses'] as num).toDouble();
+                double totalIncome =
+                    (weekData['totalIncome'] as num).toDouble();
                 int week = int.parse(weekData['week'].split('-')[1]);
 
                 return BarChartGroupData(
@@ -232,7 +240,8 @@ class BarChartWidget extends StatelessWidget {
                 );
               }).toList(),
               titlesData: FlTitlesData(
-                leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: true)),
+                leftTitles:
+                    AxisTitles(sideTitles: SideTitles(showTitles: true)),
                 bottomTitles: AxisTitles(
                   sideTitles: SideTitles(
                     showTitles: true,
@@ -262,7 +271,7 @@ class BarChartMonthly extends StatelessWidget {
     final dbHelper = DatabaseHelper();
 
     return FutureBuilder<List<Map<String, dynamic>>>(
-      future: dbHelper.getMonthlyExpensesAndIncomeList(year),
+      future: dbHelper.getMonthlyExpensesAndIncome(year),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
@@ -276,8 +285,10 @@ class BarChartMonthly extends StatelessWidget {
           return BarChart(
             BarChartData(
               barGroups: data.map((monthData) {
-                double totalExpenses = (monthData['totalExpenses'] as num).toDouble();
-                double totalIncome = (monthData['totalIncome'] as num).toDouble();
+                double totalExpenses =
+                    (monthData['totalExpenses'] as num).toDouble();
+                double totalIncome =
+                    (monthData['totalIncome'] as num).toDouble();
                 int month = int.parse(monthData['month'].split('-')[1]);
 
                 return BarChartGroupData(
@@ -297,7 +308,8 @@ class BarChartMonthly extends StatelessWidget {
                 );
               }).toList(),
               titlesData: FlTitlesData(
-                leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: true)),
+                leftTitles:
+                    AxisTitles(sideTitles: SideTitles(showTitles: true)),
                 bottomTitles: AxisTitles(
                   sideTitles: SideTitles(
                     showTitles: true,
@@ -339,8 +351,10 @@ class BarChartDaily extends StatelessWidget {
             child: BarChart(
               BarChartData(
                 barGroups: data.map((dayData) {
-                  double totalExpenses = (dayData['totalExpenses'] as num).toDouble();
-                  double totalIncome = (dayData['totalIncome'] as num).toDouble();
+                  double totalExpenses =
+                      (dayData['totalExpenses'] as num).toDouble();
+                  double totalIncome =
+                      (dayData['totalIncome'] as num).toDouble();
                   int day = int.parse(dayData['day'].split('-')[2]);
 
                   return BarChartGroupData(
@@ -407,14 +421,18 @@ class BarChartDaily extends StatelessWidget {
                     getTooltipItem: (group, groupIndex, rod, rodIndex) {
                       return BarTooltipItem(
                         rod.toY.toString(),
-                        TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                        TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold),
                       );
                     },
                   ),
                   touchCallback: (FlTouchEvent event, barTouchResponse) {
-                    if (event.isInterestedForInteractions && barTouchResponse != null && barTouchResponse.spot != null) {
+                    if (event.isInterestedForInteractions &&
+                        barTouchResponse != null &&
+                        barTouchResponse.spot != null) {
                       final touchSpot = barTouchResponse.spot!;
-                      print('Touched ${touchSpot.touchedRodData.toY} on day ${touchSpot.touchedBarGroup.x}');
+                      print(
+                          'Touched ${touchSpot.touchedRodData.toY} on day ${touchSpot.touchedBarGroup.x}');
                     }
                   },
                 ),

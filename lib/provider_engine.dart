@@ -29,6 +29,15 @@ class MainEngine extends ChangeNotifier{
     return await dbHelper.getTotalMoneyForCurrentMonth();
   }
 
+  void deleteExpense(String datetime, double amount){
+    dbHelper.deleteRow(datetime, amount);
+    notifyListeners();
+  }
+
+  void updateFunction(String datetime, double amount){
+
+  }
+
 }
 
 class DashboardProvider with ChangeNotifier {

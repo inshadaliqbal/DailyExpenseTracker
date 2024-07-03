@@ -6,52 +6,90 @@ class MyBottomSheetContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(10),
+      padding: EdgeInsets.all(16),
       height: 200,
-      color: Colors.white,
-      child: Center(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          mainAxisSize: MainAxisSize.max,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-              child: GestureDetector(
-                onTap: (){
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 10,
+            offset: Offset(0, -5),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            'Choose an option',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Colors.black87,
+            ),
+          ),
+          SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _buildOptionCard(
+                context,
+                title: 'Income',
+                color: Colors.green.shade300,
+                onTap: () {
+                  Navigator.pop(context);
                   Navigator.pushNamed(context, AddIncome.addIncome);
                 },
-                child: Container(
-                  margin: EdgeInsets.all(5),
-                  color: Colors.green.shade300,
-                  child: Center(
-                    child: Text(
-                      'Income',
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ),
-                ),
               ),
-            ),
-            Expanded(
-              child: GestureDetector(
-                onTap: (){
+              _buildOptionCard(
+                context,
+                title: 'Expense',
+                color: Colors.red.shade300,
+                onTap: () {
+                  Navigator.pop(context);
                   Navigator.pushNamed(context, AddExpense.addExpense);
                 },
-                child: Container(
-                  margin: EdgeInsets.all(5),
-                  color: Colors.red.shade300,
-                  child: Center(
-                    child: Text(
-                      'Expense',
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ),
-                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOptionCard(BuildContext context, {required String title, required Color color, required VoidCallback onTap}) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          margin: EdgeInsets.symmetric(horizontal: 8),
+          padding: EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 8,
+                offset: Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Center(
+            child: Text(
+              title,
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
               ),
             ),
-          ],
+          ),
         ),
       ),
     );
   }
 }
+

@@ -20,7 +20,8 @@ class _AddIncomeState extends State<AddIncome> {
     'Incentive',
     'Tip',
     'Loan',
-    'Profit'
+    'Profit',
+    'Other'
   ];
   String _selectedCategory = 'Salary';
   DateTime? _selectedDateTime;
@@ -74,8 +75,6 @@ class _AddIncomeState extends State<AddIncome> {
             ),
             SizedBox(height: 16),
             _buildSaveButton(context),
-            SizedBox(height: 8),
-            _buildRetrieveButton(context),
           ],
         ),
       ),
@@ -126,20 +125,30 @@ class _AddIncomeState extends State<AddIncome> {
       decoration: InputDecoration(
         filled: true,
         fillColor: Colors.grey[200],
+        contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 12),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
         ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.grey.shade400),
+        ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: Colors.black),
         ),
       ),
+      dropdownColor: Colors.white,
+      icon: Icon(Icons.arrow_drop_down, color: Colors.black),
       value: _selectedCategory,
       items: _categories.map((category) {
         return DropdownMenuItem(
           value: category,
-          child: Text(category),
+          child: Text(
+            category,
+            style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w500),
+          ),
         );
       }).toList(),
       onChanged: (newValue) {
@@ -151,10 +160,11 @@ class _AddIncomeState extends State<AddIncome> {
   }
 
   Widget _buildSaveButton(BuildContext context) {
-    return ElevatedButton(
+    return TextButton(
       onPressed: () {
         _saveExpense();
         Provider.of<MainEngine>(context, listen: false).todaysSpend();
+        Navigator.pop(context);
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.black,
@@ -162,27 +172,6 @@ class _AddIncomeState extends State<AddIncome> {
         textStyle: TextStyle(fontSize: 16),
       ),
       child: Center(child: Text('Save', style: TextStyle(color: Colors.white))),
-    );
-  }
-
-  Widget _buildRetrieveButton(BuildContext context) {
-    return OutlinedButton(
-      onPressed: () async {
-        List<Map<String, dynamic>> monthAgg =
-        await dbHelper.getWeeklyExpensesAndIncomeList(2024, 7);
-        print(monthAgg);
-      },
-      style: OutlinedButton.styleFrom(
-        backgroundColor: Colors.black,
-        side: BorderSide(color: Colors.black),
-        padding: EdgeInsets.symmetric(vertical: 16),
-        textStyle: TextStyle(fontSize: 16),
-      ),
-      child: Center(
-          child: Text(
-            'Retrieve',
-            style: TextStyle(color: Colors.black),
-          )),
     );
   }
 }
