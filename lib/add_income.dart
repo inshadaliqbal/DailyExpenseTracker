@@ -14,7 +14,6 @@ class AddIncome extends StatefulWidget {
 }
 
 class _AddIncomeState extends State<AddIncome> {
-
   final List<String> _categories = [
     'Salary',
     'Credit',
@@ -27,6 +26,7 @@ class _AddIncomeState extends State<AddIncome> {
   DateTime? _selectedDateTime;
   var amount;
   final dbHelper = DatabaseHelper();
+
   void _saveExpense() async {
     Expense _newExpense = Expense(
         amount: double.parse(amount),
@@ -36,88 +36,153 @@ class _AddIncomeState extends State<AddIncome> {
     await dbHelper.insertExpense(_newExpense);
     print('Expense saved locally.');
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Add Expense',
-          style: TextStyle(color: Colors.black),
+          'Add Income',
+          style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.black,
+        iconTheme: IconThemeData(color: Colors.white),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Amount',
-            style: TextStyle(color: Colors.black),
-          ),
-          TextField(
-            onChanged: (value) {
-              amount = value;
-            },
-            inputFormatters: <TextInputFormatter>[
-              FilteringTextInputFormatter.digitsOnly
-            ],
-            keyboardType: TextInputType.number,
-          ),
-          Text(
-            'Select Catogary',
-            style: TextStyle(color: Colors.black),
-          ),
-          DropdownButtonFormField<String>(
-            decoration: InputDecoration(labelText: 'Category'),
-            value: _selectedCategory,
-            items: _categories.map((category) {
-              return DropdownMenuItem(
-                value: category,
-                child: Text(category),
-              );
-            }).toList(),
-            onChanged: (newValue) {
-              setState(() {
-                _selectedCategory = newValue!;
-              });
-            },
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please select a category';
-              }
-              return null;
-            },
-          ),
-          Text(
-            'Write A Note',
-            style: TextStyle(color: Colors.black),
-          ),
-          TextField(),
-          Text(
-            'Set A Date',
-            style: TextStyle(color: Colors.black),
-          ),
-          DateTimePickerWidget(
-            updateDateTime: (value) {
-              _selectedDateTime = value;
-            },
-          ),
-          TextButton(
-            onPressed: () {
-              print(_selectedDateTime);
-              _saveExpense();
-            },
-            child: Text('Save'),
-          ),
-          TextButton(
-            onPressed: () async {
-              List<Map<String, dynamic>> monthAgg =
-              await dbHelper.getWeeklyExpensesAndIncomeList(2024, 7);
-              print(monthAgg);
-            },
-            child: Text('Retrieve'),
-          ),
-        ],
+      backgroundColor: Colors.white,
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildLabel('Amount'),
+            _buildTextField(
+              onChanged: (value) {
+                amount = value;
+              },
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              keyboardType: TextInputType.number,
+            ),
+            _buildLabel('Select Category'),
+            _buildDropdownButton(),
+            _buildLabel('Write A Note'),
+            _buildTextField(),
+            _buildLabel('Set A Date'),
+            DateTimePickerWidget(
+              updateDateTime: (value) {
+                _selectedDateTime = value;
+              },
+            ),
+            SizedBox(height: 16),
+            _buildSaveButton(context),
+            SizedBox(height: 8),
+            _buildRetrieveButton(context),
+          ],
+        ),
       ),
+    );
+  }
+
+  Widget _buildLabel(String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Text(
+        text,
+        style: TextStyle(
+          color: Colors.black,
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    void Function(String)? onChanged,
+    List<TextInputFormatter>? inputFormatters,
+    TextInputType? keyboardType,
+  }) {
+    return TextField(
+      onChanged: onChanged,
+      inputFormatters: inputFormatters,
+      keyboardType: keyboardType,
+      style: TextStyle(color: Colors.black),
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: Colors.grey[200],
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: Colors.black),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDropdownButton() {
+    return DropdownButtonFormField<String>(
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: Colors.grey[200],
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: Colors.black),
+        ),
+      ),
+      value: _selectedCategory,
+      items: _categories.map((category) {
+        return DropdownMenuItem(
+          value: category,
+          child: Text(category),
+        );
+      }).toList(),
+      onChanged: (newValue) {
+        setState(() {
+          _selectedCategory = newValue!;
+        });
+      },
+    );
+  }
+
+  Widget _buildSaveButton(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () {
+        _saveExpense();
+        Provider.of<MainEngine>(context, listen: false).todaysSpend();
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.black,
+        padding: EdgeInsets.symmetric(vertical: 16),
+        textStyle: TextStyle(fontSize: 16),
+      ),
+      child: Center(child: Text('Save', style: TextStyle(color: Colors.white))),
+    );
+  }
+
+  Widget _buildRetrieveButton(BuildContext context) {
+    return OutlinedButton(
+      onPressed: () async {
+        List<Map<String, dynamic>> monthAgg =
+        await dbHelper.getWeeklyExpensesAndIncomeList(2024, 7);
+        print(monthAgg);
+      },
+      style: OutlinedButton.styleFrom(
+        backgroundColor: Colors.black,
+        side: BorderSide(color: Colors.black),
+        padding: EdgeInsets.symmetric(vertical: 16),
+        textStyle: TextStyle(fontSize: 16),
+      ),
+      child: Center(
+          child: Text(
+            'Retrieve',
+            style: TextStyle(color: Colors.black),
+          )),
     );
   }
 }
@@ -165,16 +230,9 @@ class DateTimePickerWidget extends StatelessWidget {
       },
     );
 
-
     if (dateTime != null) {
-      // setState(() {
       _selectedDateTime = dateTime;
-      // });
       updateDateTime!(_selectedDateTime);
-
-
-
-
     }
   }
 
@@ -185,16 +243,20 @@ class DateTimePickerWidget extends StatelessWidget {
       children: [
         ElevatedButton(
           onPressed: () {
-            // Use Builder to obtain a valid context for the Navigator
             _pickDateTime(context);
           },
-          child: Text('Pick Date and Time'),
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
+          child: Text(
+            'Pick Date and Time',
+            style: TextStyle(color: Colors.white),
+          ),
         ),
         SizedBox(height: 20),
         Text(
           _selectedDateTime != null
               ? 'Selected DateTime: $_selectedDateTime'
               : 'No DateTime selected',
+          style: TextStyle(color: Colors.black),
         ),
       ],
     );

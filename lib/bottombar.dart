@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class BottomBar extends StatefulWidget {
-
   static const bottomBar = 'Bottom Bar';
   BottomBar({super.key});
 
@@ -16,7 +15,6 @@ class BottomBar extends StatefulWidget {
 }
 
 class _BottomBarState extends State<BottomBar> {
-
   int _selectedIndex = 0;
 
   final List<Widget> _screenOptions = [
@@ -24,7 +22,6 @@ class _BottomBarState extends State<BottomBar> {
     Container(),
     StatisticsPage()
   ];
-
 
   void _onItemTapped(int index) {
     if (index == 1) {
@@ -47,7 +44,7 @@ class _BottomBarState extends State<BottomBar> {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<MainEngine>(context,listen: false).todaysTransaction();
+    Provider.of<MainEngine>(context, listen: false).todaysTransaction();
     return Scaffold(
       bottomNavigationBar: buildBottomNavigationBarWidget(_onItemTapped, _selectedIndex),
       backgroundColor: Colors.blueGrey.shade100,
@@ -55,55 +52,59 @@ class _BottomBarState extends State<BottomBar> {
     );
   }
 }
+
 BottomNavigationBar buildBottomNavigationBarWidget(
-    Function onTap, int selectedInt) {
+    Function onTap, int selectedIndex) {
   return BottomNavigationBar(
-    items: const <BottomNavigationBarItem>[
+    items: <BottomNavigationBarItem>[
       BottomNavigationBarItem(
         icon: Icon(
           Icons.home_outlined,
           size: 28,
-          color: Colors.white70,
+          color: selectedIndex == 0 ? Colors.black : Colors.black54,
         ),
         activeIcon: Icon(
           Icons.home,
           size: 28,
-          color: Colors.white,
+          color: Colors.black,
         ),
         label: 'Home',
       ),
       BottomNavigationBarItem(
-        icon: Icon(
-          Icons.add,
-          size: 28,
-          color: Colors.white70,
+        icon: Container(
+          height: 60,
+          width: 60,
+          decoration: BoxDecoration(
+            color: Colors.black,
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.white, width: 4),
+          ),
+          child: Icon(
+            Icons.add,
+            size: 28,
+            color: Colors.white,
+          ),
         ),
-        activeIcon: Icon(
-          Icons.add,
-          size: 28,
-          color: Colors.white,
-        ),
-        label: 'ADD',
+        label: '',
       ),
       BottomNavigationBarItem(
         icon: Icon(
-          Icons.bar_chart,
+          Icons.bar_chart_outlined,
           size: 28,
-          color: Colors.white70,
+          color: selectedIndex == 2 ? Colors.black : Colors.black54,
         ),
         activeIcon: Icon(
           Icons.bar_chart,
           size: 28,
-          color: Colors.white,
+          color: Colors.black,
         ),
         label: 'Statistics',
       ),
-
     ],
-    currentIndex: selectedInt,
-    selectedItemColor: Colors.white,
+    currentIndex: selectedIndex,
+    selectedItemColor: Colors.black,
     unselectedItemColor: Colors.black54,
-    backgroundColor: Color(0xFF35B079),
+    backgroundColor: Colors.white, // Background color set to white
     type: BottomNavigationBarType.fixed,
     onTap: (index) {
       onTap(index);
@@ -112,18 +113,20 @@ BottomNavigationBar buildBottomNavigationBarWidget(
     selectedLabelStyle: TextStyle(
       fontSize: 15,
       fontWeight: FontWeight.bold,
+      color: Colors.black, // Selected label color black
     ),
     unselectedLabelStyle: TextStyle(
       fontSize: 14,
       fontWeight: FontWeight.normal,
+      color: Colors.black54, // Unselected label color grayish black
     ),
     selectedIconTheme: IconThemeData(
       size: 28,
-      color: Colors.black,
+      color: Colors.black, // Selected icon color black
     ),
     unselectedIconTheme: IconThemeData(
       size: 28,
-      color: Colors.black87,
+      color: Colors.black54, // Unselected icon color grayish black
     ),
     showSelectedLabels: true, // Show labels for selected items
     showUnselectedLabels: false, // Show labels for unselected items
