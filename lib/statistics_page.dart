@@ -19,10 +19,11 @@ class StatisticsPage extends StatefulWidget {
 class _StatisticsPageState extends State<StatisticsPage> {
   final dbHelper = DatabaseHelper();
   Widget currentChart = BarChartDaily();
-  List<Map<String, dynamic>> currentExpenseListFunc = [];
+
 
   @override
   Widget build(BuildContext context) {
+    List<Map<String, dynamic>> currentExpenseListFunc = Provider.of<MainEngine>(context).dailyExpenseAndIncomeLast7DaysList;
     return Scaffold(
       appBar: buildAppBarStatistics(),
       body: Consumer<MainEngine>(builder: (context, mainEngine, child) {
@@ -37,6 +38,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                     buttonTitle: 'Daily',
                     buttonFunction: () {
                       setState(() {
+
                         currentChart = BarChartDaily();
                         currentExpenseListFunc =
                             mainEngine.dailyExpenseAndIncomeLast7DaysList;

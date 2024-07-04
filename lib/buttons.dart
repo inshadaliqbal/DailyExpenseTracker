@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 class StatisticsPageAggregateButton extends StatelessWidget {
   String? buttonTitle;
   Function? buttonFunction;
@@ -11,7 +10,7 @@ class StatisticsPageAggregateButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        buttonFunction;
+        buttonFunction!();
       },
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
