@@ -1,12 +1,14 @@
+import 'package:dailyexpensetracker/add_expense.dart';
+import 'package:dailyexpensetracker/add_income.dart';
 import 'package:flutter/material.dart';
 
 class ExpenseCard extends StatelessWidget {
-  Map<String,dynamic> expenseDetail;
-  ExpenseCard({super.key,required this.expenseDetail});
+  Map<String, dynamic> expenseDetail;
+  ExpenseCard({super.key, required this.expenseDetail});
 
   @override
   Widget build(BuildContext context) {
-    print(expenseDetail);
+    String? amountType = expenseDetail['amountType'];
     return Scaffold(
         backgroundColor: Colors.transparent,
         body: Center(
@@ -26,20 +28,35 @@ class ExpenseCard extends StatelessWidget {
                     color: Colors.black,
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: Text('${expenseDetail["amount"]} Dollars',style: TextStyle(color: Colors.white),),
+                  child: Text(
+                    '${expenseDetail["amount"]} Dollars',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
                 Text('Category'),
                 Text('Date & Time'),
                 Text('Note'),
                 TextButton(
                   onPressed: () {
-
                     Navigator.pop(context);
                   },
                   child: Text('Close'),
                 ),
-                TextButton(onPressed: () {
-                }, child: Text('Edit'))
+                TextButton(
+                    onPressed: () {
+                      if (amountType == 'income') {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return AddIncome(incomeDetails: expenseDetail,);
+                        }));
+                      } else {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return AddExpense(spendDetails: expenseDetail,);
+                        }));
+                      }
+                    },
+                    child: Text('Edit'))
               ],
             ),
           ),

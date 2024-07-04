@@ -6,8 +6,9 @@ import 'package:omni_datetime_picker/omni_datetime_picker.dart';
 import 'package:provider/provider.dart';
 
 class AddExpense extends StatefulWidget {
+  Map<String, dynamic>? spendDetails;
   static const addExpense = 'AddExpense';
-  AddExpense({super.key});
+  AddExpense({super.key,this.spendDetails});
 
   @override
   State<AddExpense> createState() => _AddExpenseState();
@@ -161,8 +162,16 @@ class _AddExpenseState extends State<AddExpense> {
   Widget _buildSaveButton(BuildContext context) {
     return TextButton(
       onPressed: () {
-        _saveExpense();
-        Navigator.pop(context);
+        if(widget.spendDetails == null){
+          _saveExpense();
+          Navigator.pop(context);
+        }else{
+
+          Provider.of<MainEngine>(context,listen: false).deleteExpense(widget.spendDetails!['datetime']);
+          _selectedDateTime = DateTime.parse(widget.spendDetails!["datetime"]);
+          _saveExpense();
+          Navigator.pop(context);
+        }
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.black,

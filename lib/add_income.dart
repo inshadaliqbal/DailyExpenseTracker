@@ -7,7 +7,8 @@ import 'package:provider/provider.dart';
 
 class AddIncome extends StatefulWidget {
   static const addIncome = 'AddIncome';
-  AddIncome({super.key});
+  Map<String, dynamic>? incomeDetails;
+  AddIncome({this.incomeDetails});
 
   @override
   State<AddIncome> createState() => _AddIncomeState();
@@ -35,7 +36,7 @@ class _AddIncomeState extends State<AddIncome> {
         datetime: _selectedDateTime,
         amountType: 'income');
 
-    Provider.of<MainEngine>(context,listen: false).addExpense(_newExpense);
+    Provider.of<MainEngine>(context, listen: false).addExpense(_newExpense);
   }
 
   @override
@@ -147,7 +148,8 @@ class _AddIncomeState extends State<AddIncome> {
           value: category,
           child: Text(
             category,
-            style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w500),
+            style: TextStyle(
+                color: Colors.black, fontSize: 16, fontWeight: FontWeight.w500),
           ),
         );
       }).toList(),
@@ -161,9 +163,17 @@ class _AddIncomeState extends State<AddIncome> {
 
   Widget _buildSaveButton(BuildContext context) {
     return TextButton(
-      onPressed: () {
-        _saveExpense();
-        Navigator.pop(context);
+      onPressed: () async {
+        if (widget.incomeDetails == null)  {
+          _saveExpense();
+          Navigator.pop(context);
+        }else{
+
+          Provider.of<MainEngine>(context,listen: false).deleteExpense(widget.incomeDetails!['datetime']);
+          _selectedDateTime = DateTime.parse(widget.incomeDetails!["datetime"]);
+          _saveExpense();
+          Navigator.pop(context);
+        }
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.black,
