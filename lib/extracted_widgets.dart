@@ -1,8 +1,11 @@
 import 'dart:ui';
 
+import 'package:blurry_modal_progress_hud/blurry_modal_progress_hud.dart';
 import 'package:dailyexpensetracker/buttons.dart';
 import 'package:dailyexpensetracker/expense_card.dart';
+import 'package:dailyexpensetracker/style.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:omni_datetime_picker/omni_datetime_picker.dart';
 import 'package:provider/provider.dart';
 import 'provider_engine.dart';
@@ -32,7 +35,7 @@ class HomePageExpenseRow extends StatelessWidget {
                 children: [
                   Text(
                     'Today\'s Cash In',
-                    style: TextStyle(fontSize: 16),
+                    style: TextStyle(fontSize: 16,color: Colors.white),
                   ),
                   SizedBox(height: 8),
                   Text(
@@ -40,6 +43,7 @@ class HomePageExpenseRow extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
+                      color: Colors.white
                     ),
                   ),
                 ],
@@ -60,7 +64,7 @@ class HomePageExpenseRow extends StatelessWidget {
                 children: [
                   Text(
                     'Today\'s Expense',
-                    style: TextStyle(fontSize: 16),
+                    style: TextStyle(fontSize: 16,color: Colors.white),
                   ),
                   SizedBox(height: 8),
                   Text(
@@ -68,6 +72,7 @@ class HomePageExpenseRow extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
+                      color: Colors.white
                     ),
                   ),
                 ],
@@ -100,7 +105,7 @@ class HomePageExpenseList extends StatelessWidget {
 
           return Padding(
             padding:
-            const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            const EdgeInsets.symmetric(vertical: 8.0),
             child: GestureDetector(
               onLongPress: () {
                 mainEngine.deleteExpense(transaction["datetime"]);
@@ -184,10 +189,6 @@ class ExpenseListStatisticsPage extends StatelessWidget {
         itemBuilder: (context, index) {
           var transaction = inputFunction[index];
           bool isIncome = transaction["amountType"] == 'income';
-          IconData arrowIcon =
-          isIncome ? Icons.arrow_upward : Icons.arrow_downward;
-          Color amountColor = isIncome ? Colors.green : Colors.red;
-          double amountValue = transaction["amount"] * (isIncome ? 1 : -1);
 
           return Padding(
             padding:
@@ -197,35 +198,59 @@ class ExpenseListStatisticsPage extends StatelessWidget {
                 Provider.of<MainEngine>(context, listen: false).deleteExpense(
                     transaction['datetime']);
               },
+              onTap: () {
+                showGeneralDialog(
+                  context: context,
+                  barrierDismissible: true,
+                  barrierLabel: 'Label',
+                  pageBuilder: (context, anim1, anim2) {
+                    return BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                        child: ExpenseCard(
+                          expenseDetail: transaction,
+                        ));
+                  },
+                  transitionBuilder: (context, anim1, anim2, child) {
+                    return FadeTransition(
+                      opacity: anim1,
+                      child: child,
+                    );
+                  },
+                  transitionDuration: Duration(milliseconds: 200),
+                );
+              },
               child: Card(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
-                color: Colors.white,
                 elevation: 2,
                 child: ListTile(
                   leading: Icon(
-                    arrowIcon,
-                    color: amountColor,
+                    isIncome ? Icons.arrow_upward : Icons.arrow_downward,
+                    color: isIncome ? Colors.green : Colors.red,
+                    size: 32, // Adjust size as needed
                   ),
                   title: Text(
                     transaction["title"],
                     style: TextStyle(
-                      color: Colors.black,
                       fontWeight: FontWeight.bold,
+                      fontSize: 16,
                     ),
                   ),
                   subtitle: Text(
-                    'Date: ${DateTime.parse(transaction["datetime"]).day}/${DateTime.parse(transaction["datetime"]).month}',
+                    'Time: ${DateTime.parse(transaction["datetime"]).hour} : ${DateTime.parse(transaction["datetime"]).minute}', // Display absolute value
                     style: TextStyle(
-                      color: Colors.grey[700],
+                      fontSize: 14,
                     ),
                   ),
                   trailing: Text(
-                    '${amountValue.toStringAsFixed(2)}',
+                    '${isIncome ? '+' : '-'}\$${transaction["amount"].abs().toStringAsFixed(2)}',
                     style: TextStyle(
-                      color: amountColor,
+                      color: isIncome
+                          ? Colors.green
+                          : Colors.red, // Green for income, red for spend
                       fontWeight: FontWeight.bold,
+                      fontSize: 16,
                     ),
                   ),
                 ),
@@ -411,5 +436,239 @@ class AddExpensesTextField extends StatelessWidget {
       ),
     );
   }
+}
+
+class MainButton extends StatelessWidget {
+
+  String? title;
+  Function? buttonFunction;
+  MainButton({
+    super.key,@required this.title,@required this.buttonFunction
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Colors.blue, Colors.pink],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: Offset(0, 3), // changes position of shadow
+          ),
+        ],
+      ),
+      child: TextButton(
+        onPressed: () {
+          buttonFunction!();
+        },
+        style: TextButton.styleFrom(
+          padding: EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+          // backgroundColor: Colors.white, // For the text color
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+        ),
+        child: Text(
+          title!,
+          style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 2,
+              color: Colors.white
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class buildSocialButton extends StatelessWidget {
+  const buildSocialButton({
+    super.key,
+    required this.imagePath,
+  });
+
+  final String imagePath;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 50,
+      height: 50,
+      margin: EdgeInsets.symmetric(horizontal: 8),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(25),
+        color: Colors.grey[200],
+      ),
+      child: Image.asset(imagePath),
+    );
+  }
+}
+
+
+class MainTextField extends StatelessWidget {
+  String? hintText;
+  Function? textfieldFunction;
+  MainTextField({
+    super.key,@required this.hintText,@required  this.textfieldFunction
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      onChanged: (value) {
+        textfieldFunction!(value);
+      },
+      obscureText: true,
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: Colors.grey[200],
+        hintText: hintText,
+        contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide.none,
+        ),
+      ),
+    );
+  }
+}
+
+
+
+class BlurryHUD extends StatelessWidget {
+  final Widget childWidget;
+
+  BlurryHUD({Key? key, required this.childWidget}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return BlurryModalProgressHUD(
+      inAsyncCall: Provider.of<MainEngine>(context).getLoadingBool(),
+      blurEffectIntensity: 4,
+      progressIndicator: ProgressIndicatorContainer(),
+      dismissible: false,
+      opacity: 0.4,
+      color: Colors.black,
+      child: childWidget,
+    );
+  }
+}
+
+class ProgressIndicatorContainer extends StatelessWidget {
+  const ProgressIndicatorContainer({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      constraints: BoxConstraints(
+        maxHeight: 200,
+        maxWidth: 300,
+        minHeight: 100,
+        minWidth: 100,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        children: [
+          Text(
+            'Loading Please Wait',
+            style: TextStyle(fontSize: 20),
+          ),
+          SpinKitFadingCircle(
+            color: Colors.white,
+            size: 50.0,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
+class MainTextFieldSign extends StatelessWidget {
+  final Function changeFunction;
+  final String? label;
+
+  MainTextFieldSign({Key? key, required this.label, required this.changeFunction})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      child: Form(
+        child: TextFormField(
+          style: TextStyle(color: Colors.white),
+          keyboardType: TextInputType.emailAddress,
+          onChanged: (value) => changeFunction(value),
+          textAlign: TextAlign.left,
+          decoration: MainTextFieldInputDecoration(label),
+          validator: _validateEmail,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+        ),
+      ),
+    );
+  }
+}
+
+class MainTextFieldPassword extends StatelessWidget {
+  final Function changeFunction;
+  final String? label;
+
+  MainTextFieldPassword({Key? key, required this.label, required this.changeFunction})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      child: Form(
+        child: TextFormField(
+          style: TextStyle(color: Colors.white),
+          keyboardType: TextInputType.visiblePassword,
+          onChanged: (value) => changeFunction(value),
+          textAlign: TextAlign.left,
+          decoration: MainTextFieldInputDecoration(label),
+          validator: _validatePassword,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          obscureText: true,
+        ),
+      ),
+    );
+  }
+}
+
+String? _validateEmail(String? value) {
+  if (value == null || value.isEmpty) {
+    return 'Please enter an email address.';
+  }
+  final RegExp emailRegex = RegExp(
+    r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+  );
+  if (!emailRegex.hasMatch(value)) {
+    return 'Please enter a valid email address.';
+  }
+  return null;
+}
+
+String? _validatePassword(String? value) {
+  if (value == null || value.isEmpty) {
+    return 'Please enter a password.';
+  }
+  if (value.length < 7) {
+    return 'Password should contain at least 6 characters';
+  }
+  return null;
 }
 

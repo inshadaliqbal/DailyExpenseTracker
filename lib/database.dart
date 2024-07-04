@@ -248,10 +248,6 @@ class DatabaseHelper {
       return 0.0;
     }
   }
-
-
-
-
 }
 
 class Expense {

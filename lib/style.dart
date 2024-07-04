@@ -54,3 +54,25 @@ BoxDecoration buildHomePageBoxDecoration() {
           bottomLeft: Radius.circular(20),
           bottomRight: Radius.circular(20)));
 }
+
+InputDecoration MainTextFieldInputDecoration(String? label) {
+  return InputDecoration(
+    labelText: label,
+    labelStyle: const TextStyle(letterSpacing: 3),
+    filled: true,
+    fillColor: Colors.black,
+    border: OutlineInputBorder(
+      borderSide: const BorderSide(width: 1, color: Colors.white),
+      borderRadius: BorderRadius.circular(20),
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderSide: const BorderSide(width: 1, color: Colors.white),
+      borderRadius: BorderRadius.circular(30),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderSide: const BorderSide(width: 1, color: Colors.white),
+      borderRadius: BorderRadius.circular(10),
+    ),
+    contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+  );
+}

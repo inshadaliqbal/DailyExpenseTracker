@@ -1,17 +1,15 @@
-import 'dart:ui';
-
-import 'package:dailyexpensetracker/appbars.dart';
-import 'package:dailyexpensetracker/expense_card.dart';
-import 'package:dailyexpensetracker/extracted_widgets.dart';
-import 'package:dailyexpensetracker/style.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:dailyexpensetracker/provider_engine.dart';
+import 'package:dailyexpensetracker/appbars.dart';
+import 'package:dailyexpensetracker/extracted_widgets.dart';
 
 class HomePage extends StatefulWidget {
+
+  String? userName;
   static const homePage = 'HomePage';
 
-  HomePage({super.key});
+  HomePage({super.key, this.userName});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -21,7 +19,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
       Provider.of<MainEngine>(context, listen: false).fetchData();
     });
   }
@@ -34,11 +32,18 @@ class _HomePageState extends State<HomePage> {
         child: Consumer<MainEngine>(
           builder: (context, mainEngine, child) {
             return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
                   flex: 3,
                   child: Container(
-                    decoration: buildHomePageBoxDecoration(),
+                    decoration: BoxDecoration(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(40),
+                        bottomRight: Radius.circular(40),
+                      ),
+                    ),
                     padding: EdgeInsets.all(16.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -66,7 +71,7 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                 ),
                                 Text(
-                                  'Inshad Iqbal',
+                                  '',
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 18,
@@ -114,7 +119,7 @@ class _HomePageState extends State<HomePage> {
                               style: TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 20,
+                                fontSize: 24,
                               ),
                             ),
                             Text(
@@ -139,4 +144,3 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-

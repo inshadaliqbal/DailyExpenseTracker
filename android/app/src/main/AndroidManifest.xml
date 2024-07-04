@@ -16,9 +16,9 @@
                  while the Flutter UI initializes. After that, this theme continues
                  to determine the Window background behind the Flutter UI. -->
             <meta-data
-              android:name="io.flutter.embedding.android.NormalTheme"
-              android:resource="@style/NormalTheme"
-              />
+                android:name="io.flutter.embedding.android.NormalTheme"
+                android:resource="@style/NormalTheme"
+                />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -42,3 +42,60 @@
         </intent>
     </queries>
 </manifest>
+
+<!--<manifest xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    package="com.example.your_app_package_name">-->
+
+<!--    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />-->
+
+<!--    <application-->
+<!--        android:name="${applicationName}"-->
+<!--        android:label="Daily Expense Tracker"-->
+<!--        android:icon="@mipmap/ic_launcher">-->
+
+<!--        &lt;!&ndash; Your main activity &ndash;&gt;-->
+<!--        <activity-->
+<!--            android:name=".MainActivity"-->
+<!--            android:launchMode="singleTop"-->
+<!--            android:theme="@style/LaunchTheme">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+<!--            &lt;!&ndash; Ensure proper configuration for Flutter &ndash;&gt;-->
+<!--            <meta-data-->
+<!--                android:name="flutterEmbedding"-->
+<!--                android:value="2" />-->
+<!--        </activity>-->
+
+<!--        &lt;!&ndash; ScheduledNotificationReceiver &ndash;&gt;-->
+<!--        <receiver-->
+<!--            android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver"-->
+<!--            android:exported="false">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="com.dexterous.flutterlocalnotifications.SCHEDULED_NOTIFICATION" />-->
+<!--            </intent-filter>-->
+<!--        </receiver>-->
+
+<!--        &lt;!&ndash; ScheduledNotificationBootReceiver &ndash;&gt;-->
+<!--        <receiver-->
+<!--            android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver"-->
+<!--            android:exported="false">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.BOOT_COMPLETED" />-->
+<!--                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />-->
+<!--                <action android:name="android.intent.action.QUICKBOOT_POWERON" />-->
+<!--                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" />-->
+<!--            </intent-filter>-->
+<!--        </receiver>-->
+
+<!--        &lt;!&ndash; Permissions for text processing &ndash;&gt;-->
+<!--        <queries>-->
+<!--            <intent>-->
+<!--                <action android:name="android.intent.action.PROCESS_TEXT" />-->
+<!--                <data android:mimeType="text/plain" />-->
+<!--            </intent>-->
+<!--        </queries>-->
+
+<!--    </application>-->
+<!--</manifest>-->

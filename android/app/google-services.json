@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "174022447226",
+    "project_id": "nerulending-d0aae",
+    "storage_bucket": "nerulending-d0aae.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:174022447226:android:5297f85a1a297077b9ebc3",
+        "android_client_info": {
+          "package_name": "com.example.dailyexpensetracker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDI-y8yimVQwQ-yRmkhFF_0D36PLKgT-3k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
