@@ -38,22 +38,31 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 150.0, top: 50),
+                    Center(
                       child: Text(
-                        'Welcome!',
+                        'Welcome',
                         style: kMainTextstyleWelcomePage,
+                      ),
+                    ),
+                    Container(
+                      constraints: const BoxConstraints(minHeight: 200, minWidth: 150),
+                      child: const Image(
+                        image: AssetImage('image/signup.jpg'),
+                        fit: BoxFit.cover,
                       ),
                     ),
                     Text(
                       'Please register',
                       style: TextStyle(color: Colors.black),
                     ),
+                    SizedBox(height: 20,),
                     MainTextField(
                         hintText: 'Name',
                         textfieldFunction: (value) {
                           name = value;
                         }),
+                    SizedBox(height: 10,),
+
                     MainTextFieldSign(
                       label: 'EMAIL',
                       changeFunction: (value) {
