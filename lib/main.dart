@@ -13,13 +13,7 @@ import 'package:provider/provider.dart';
 
 void main() {
   runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => DashboardProvider()),
-        ChangeNotifierProvider(create: (_) => MainEngine()),
-      ],
-      child: DailyExpenseTracker(),
-    ),
+    DailyExpenseTracker(),
   );
 }
 

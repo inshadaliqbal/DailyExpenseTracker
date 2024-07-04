@@ -29,87 +29,93 @@ class _StatisticsPageState extends State<StatisticsPage> {
             IconThemeData(color: Colors.black), // Adjust app bar icon color
       ),
       backgroundColor: Colors.white,
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      currentChart = BarChartDaily();
-                      currentExpenseListFunc =
-                          dbHelper.getWeeklyExpensesAndIncomeForLast7DaysList();
-                    });
-                  },
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                    decoration: BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      'Daily',
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      currentChart = BarChartWidget();
-                      currentExpenseListFunc =
-                          dbHelper.getWeeklyExpensesAndIncomeForLast7DaysList();
-                    });
-                  },
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                    decoration: BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      'Weekly',
-                      style: TextStyle(color: Colors.white, fontSize: 16),
+      body: Consumer<MainEngine>(builder: (context, mainEngine, child) {
+        return Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        currentChart = BarChartDaily();
+                        currentExpenseListFunc =
+                            mainEngine.dailyExpenseAndIncomeLast7DaysList();
+                      });
+                    },
+                    child: Container(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        'Daily',
+                        style: TextStyle(color: Colors.white, fontSize: 16),
+                      ),
                     ),
                   ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      currentChart = BarChartMonthly(year: DateTime.now().year);
-                      currentExpenseListFunc = dbHelper
-                          .getMonthlyExpensesAndIncomeList(DateTime.now().year);
-                    });
-                  },
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                    decoration: BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      'Monthly',
-                      style: TextStyle(color: Colors.white, fontSize: 16),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        currentChart = BarChartWidget();
+                        currentExpenseListFunc = dbHelper
+                            .getWeeklyExpensesAndIncomeForLast7DaysList();
+                      });
+                    },
+                    child: Container(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        'Weekly',
+                        style: TextStyle(color: Colors.white, fontSize: 16),
+                      ),
                     ),
                   ),
-                ),
-
-              ],
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        currentChart =
+                            BarChartMonthly(year: DateTime.now().year);
+                        currentExpenseListFunc =
+                            dbHelper.getMonthlyExpensesAndIncomeList(
+                                DateTime.now().year);
+                      });
+                    },
+                    child: Container(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        'Monthly',
+                        style: TextStyle(color: Colors.white, fontSize: 16),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          SizedBox(height: 16),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: currentChart,
+            SizedBox(height: 16),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: currentChart,
+              ),
             ),
-          ),
-          ExpenseList(inputFunction: currentExpenseListFunc),
-        ],
-      ),
+            ExpenseList(inputFunction: currentExpenseListFunc),
+          ],
+        );
+      }),
     );
   }
 }
@@ -138,19 +144,21 @@ class ExpenseList extends StatelessWidget {
               itemBuilder: (context, index) {
                 var transaction = data[index];
                 bool isIncome = transaction["amountType"] == 'income';
-                IconData arrowIcon = isIncome ? Icons.arrow_upward : Icons.arrow_downward;
+                IconData arrowIcon =
+                    isIncome ? Icons.arrow_upward : Icons.arrow_downward;
                 Color amountColor = isIncome ? Colors.green : Colors.red;
-                double amountValue = transaction["amount"] * (isIncome ? 1 : -1);
+                double amountValue =
+                    transaction["amount"] * (isIncome ? 1 : -1);
 
                 return Padding(
                   padding: const EdgeInsets.symmetric(
                       vertical: 8.0, horizontal: 16.0),
                   child: GestureDetector(
-                    onLongPress: (){
-                      Provider.of<MainEngine>(context,listen: false).deleteExpense(transaction['datetime'], transaction['amount']);
+                    onLongPress: () {
+                      Provider.of<MainEngine>(context, listen: false)
+                          .deleteExpense(
+                              transaction['datetime'], transaction['amount']);
                     },
-
-
                     child: Card(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
@@ -194,7 +202,6 @@ class ExpenseList extends StatelessWidget {
     );
   }
 }
-
 
 class BarChartWidget extends StatelessWidget {
   @override
@@ -335,7 +342,8 @@ class BarChartDaily extends StatelessWidget {
     final dbHelper = DatabaseHelper();
 
     return FutureBuilder<List<Map<String, dynamic>>>(
-      future: dbHelper.getDailyExpensesAndIncomeForLast7Days(),
+      future: Provider.of<MainEngine>(context).dailyExpenseAndIncomeLast7Days(),
+      // future:  dbHelper.getDailyExpensesAndIncomeForLast7Days(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());

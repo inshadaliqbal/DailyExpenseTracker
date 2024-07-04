@@ -44,7 +44,6 @@ class _BottomBarState extends State<BottomBar> {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<MainEngine>(context, listen: false).todaysTransaction();
     return Scaffold(
       bottomNavigationBar: buildBottomNavigationBarWidget(_onItemTapped, _selectedIndex),
       backgroundColor: Colors.blueGrey.shade100,

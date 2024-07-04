@@ -34,8 +34,8 @@ class _AddIncomeState extends State<AddIncome> {
         title: _selectedCategory,
         datetime: _selectedDateTime,
         amountType: 'income');
-    await dbHelper.insertExpense(_newExpense);
-    print('Expense saved locally.');
+
+    Provider.of<MainEngine>(context,listen: false).addExpense(_newExpense);
   }
 
   @override
@@ -163,7 +163,6 @@ class _AddIncomeState extends State<AddIncome> {
     return TextButton(
       onPressed: () {
         _saveExpense();
-        Provider.of<MainEngine>(context, listen: false).todaysSpend();
         Navigator.pop(context);
       },
       style: ElevatedButton.styleFrom(

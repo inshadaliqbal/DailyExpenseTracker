@@ -1,27 +1,53 @@
-
 import 'package:dailyexpensetracker/database.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:provider/provider.dart';
 
-class MainEngine extends ChangeNotifier{
+class MainEngine extends ChangeNotifier {
   final dbHelper = DatabaseHelper();
-  var todaysTransactionList;
-  var todaysSpendValue;
+  double _totalMoney = 0.0;
+  double _todaysCashIn = 0.0; // Placeholder for actual logic
+  double _todaysExpense = 0.0;
+  double get totalMoney => _totalMoney;
+  double get todaysCashIn => _todaysCashIn;
+  double get todaysExpense => _todaysExpense;
+  var _todaysTransactionList;
+  var _dailyExpenseAndIncomeLast7Days;
+  var _dailyExpenseAndIncomeLast7DaysList;
 
-  void todaysTransaction() async {
-    await dbHelper.database;
-    todaysTransactionList = await dbHelper.getTodaysExpenses();
+  List<Map<String, dynamic>> get todaysTransactionList =>
+      _todaysTransactionList;
+
+  void fetchData() async {
+    _totalMoney = await dbHelper.getTotalMoneyForCurrentMonth();
+    _todaysCashIn = await dbHelper
+        .getTodaysTotalIncome(); // Replace with actual logic to fetch today's cash in
+    _todaysExpense = await dbHelper.getTodaysTotalSpending();
+    _todaysTransactionList = await dbHelper.getTodaysExpenses();
+    _dailyExpenseAndIncomeLast7DaysList =
+        await dbHelper.getWeeklyExpensesAndIncomeForLast7DaysList();
+    _dailyExpenseAndIncomeLast7Days =
+        await dbHelper.getDailyExpensesAndIncomeForLast7Days();
     notifyListeners();
   }
 
-  Future<double> todaysSpend()async {
-    todaysSpendValue = await dbHelper.getTodaysTotalSpending();
-    return todaysSpendValue;
+  Future<List<Map<String, dynamic>>> dailyExpenseAndIncomeLast7Days() async {
+    return _dailyExpenseAndIncomeLast7Days;
   }
 
-  Future<List<Map<String,dynamic>>> expenseList(Future<List<Map<String, dynamic>>> inputFunction) async {
+  Future<List<Map<String, dynamic>>>
+      dailyExpenseAndIncomeLast7DaysList() async {
+    return _dailyExpenseAndIncomeLast7DaysList;
+  }
+
+  void addExpense(Expense newExpense) async {
+    await dbHelper.insertExpense(newExpense);
+    fetchData();
+    notifyListeners();
+  }
+
+  Future<List<Map<String, dynamic>>> expenseList(
+      Future<List<Map<String, dynamic>>> inputFunction) async {
     print(inputFunction);
-    List<Map<String,dynamic>> expenseList = await inputFunction;
+    List<Map<String, dynamic>> expenseList = await inputFunction;
     return expenseList;
   }
 
@@ -29,32 +55,10 @@ class MainEngine extends ChangeNotifier{
     return await dbHelper.getTotalMoneyForCurrentMonth();
   }
 
-  void deleteExpense(String datetime, double amount){
+  void deleteExpense(String datetime, double amount) {
     dbHelper.deleteRow(datetime, amount);
     notifyListeners();
   }
 
-  void updateFunction(String datetime, double amount){
-
-  }
-
-}
-
-class DashboardProvider with ChangeNotifier {
-  final DatabaseHelper dbHelper = DatabaseHelper();
-
-  double _totalMoney = 0.0;
-  double _todaysCashIn = 0.0; // Placeholder for actual logic
-  double _todaysExpense = 0.0;
-
-  double get totalMoney => _totalMoney;
-  double get todaysCashIn => _todaysCashIn;
-  double get todaysExpense => _todaysExpense;
-
-  Future<void> fetchDashboardData(BuildContext context) async {
-    _totalMoney = await dbHelper.getTotalMoneyForCurrentMonth();
-    _todaysCashIn = await dbHelper.getTodaysTotalIncome(); // Replace with actual logic to fetch today's cash in
-    _todaysExpense = await dbHelper.getTodaysTotalSpending();
-    notifyListeners();
-  }
+  void updateFunction(String datetime, double amount) {}
 }

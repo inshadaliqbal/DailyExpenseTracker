@@ -1,5 +1,4 @@
 import 'package:dailyexpensetracker/database.dart';
-import 'package:dailyexpensetracker/expense.dart';
 import 'package:dailyexpensetracker/provider_engine.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -34,8 +33,7 @@ class _AddExpenseState extends State<AddExpense> {
         title: _selectedCategory,
         datetime: _selectedDateTime,
         amountType: 'spend');
-    await dbHelper.insertExpense(_newExpense);
-    print('Expense saved locally.');
+    Provider.of<MainEngine>(context,listen: false).addExpense(_newExpense);
   }
 
   @override
@@ -164,7 +162,7 @@ class _AddExpenseState extends State<AddExpense> {
     return TextButton(
       onPressed: () {
         _saveExpense();
-        Provider.of<MainEngine>(context, listen: false).todaysSpend();
+        Navigator.pop(context);
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.black,

@@ -16,8 +16,8 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<DashboardProvider>(context, listen: false)
-          .fetchDashboardData(context);
+      Provider.of<MainEngine>(context, listen: false)
+          .fetchData();
     });
   }
 
@@ -39,13 +39,8 @@ class _HomePageState extends State<HomePage> {
         elevation: 0,
       ),
       body: SafeArea(
-        child: Consumer<DashboardProvider>(
-          builder: (context, dashboardProvider, child) {
-            if (dashboardProvider.totalMoney == 0.0 &&
-                dashboardProvider.todaysExpense == 0.0) {
-              return Center(child: CircularProgressIndicator());
-            }
-
+        child: Consumer<MainEngine>(
+          builder: (context, mainEngine, child) {
             return Column(
               children: [
                 Expanded(
@@ -103,7 +98,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                         Text(
-                          '\$ ${dashboardProvider.totalMoney.toStringAsFixed(2)}',
+                          '\$ ${mainEngine.totalMoney.toStringAsFixed(2)}',
                           style: TextStyle(
                             fontSize: 36,
                             color: Colors.white,
@@ -130,7 +125,7 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                       SizedBox(height: 8),
                                       Text(
-                                        '\$${dashboardProvider.todaysCashIn.toStringAsFixed(2)}',
+                                        '\$${mainEngine.todaysCashIn.toStringAsFixed(2)}',
                                         style: TextStyle(
                                           fontSize: 20,
                                           fontWeight: FontWeight.bold,
@@ -158,7 +153,7 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                       SizedBox(height: 8),
                                       Text(
-                                        '\$${dashboardProvider.todaysExpense.toStringAsFixed(2)}',
+                                        '\$${mainEngine.todaysExpense.toStringAsFixed(2)}',
                                         style: TextStyle(
                                           fontSize: 20,
                                           fontWeight: FontWeight.bold,
