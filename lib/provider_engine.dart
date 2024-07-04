@@ -12,9 +12,24 @@ class MainEngine extends ChangeNotifier {
   var _todaysTransactionList;
   var _dailyExpenseAndIncomeLast7Days;
   var _dailyExpenseAndIncomeLast7DaysList;
+  var _weeklyExpenseAndIncome;
+  var _weeklyExpenseAndIncomeList;
+  var _monthlyExpenseAndIncome;
+  var _monthlyExpenseAndIncomeList;
 
   List<Map<String, dynamic>> get todaysTransactionList =>
       _todaysTransactionList;
+
+  List<Map<String, dynamic>> get dailyExpenseAndIncomeLast7DaysList =>
+      _dailyExpenseAndIncomeLast7DaysList;
+
+  List<Map<String, dynamic>> get weeklyExpenseAndIncomeList =>
+      _weeklyExpenseAndIncomeList;
+
+  List<Map<String, dynamic>> get monthlyExpenseAndIncomeList =>
+      _monthlyExpenseAndIncomeList;
+
+
 
   void fetchData() async {
     _totalMoney = await dbHelper.getTotalMoneyForCurrentMonth();
@@ -26,17 +41,29 @@ class MainEngine extends ChangeNotifier {
         await dbHelper.getWeeklyExpensesAndIncomeForLast7DaysList();
     _dailyExpenseAndIncomeLast7Days =
         await dbHelper.getDailyExpensesAndIncomeForLast7Days();
+    _weeklyExpenseAndIncome = await dbHelper.getWeeklyExpensesAndIncome(
+        DateTime.now().year, DateTime.now().month);
+    _weeklyExpenseAndIncomeList = await dbHelper
+        .getWeeklyExpensesAndIncomeList(DateTime.now().year, DateTime.now().month);
+    _monthlyExpenseAndIncome = await dbHelper.getMonthlyExpensesAndIncome(DateTime.now().year);
+    _monthlyExpenseAndIncomeList = await dbHelper.getMonthlyExpensesAndIncomeList(DateTime.now().year);
+    print(_monthlyExpenseAndIncomeList);
     notifyListeners();
+  }
+  Future<List<Map<String, dynamic>>> monthlyExpenseAndIncome()async{
+    return _monthlyExpenseAndIncome;
+  }
+
+  Future<List<Map<String, dynamic>>> weeklyExpenseAndIncome()async{
+    return _weeklyExpenseAndIncome;
   }
 
   Future<List<Map<String, dynamic>>> dailyExpenseAndIncomeLast7Days() async {
     return _dailyExpenseAndIncomeLast7Days;
   }
 
-  Future<List<Map<String, dynamic>>>
-      dailyExpenseAndIncomeLast7DaysList() async {
-    return _dailyExpenseAndIncomeLast7DaysList;
-  }
+
+
 
   void addExpense(Expense newExpense) async {
     await dbHelper.insertExpense(newExpense);

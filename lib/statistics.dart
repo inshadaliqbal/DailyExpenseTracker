@@ -16,11 +16,10 @@ class StatisticsPage extends StatefulWidget {
 class _StatisticsPageState extends State<StatisticsPage> {
   final dbHelper = DatabaseHelper();
   Widget currentChart = BarChartDaily();
+  List<Map<String, dynamic>> currentExpenseListFunc = [];
 
   @override
   Widget build(BuildContext context) {
-    var currentExpenseListFunc =
-        dbHelper.getWeeklyExpensesAndIncomeForLast7DaysList();
     return Scaffold(
       appBar: AppBar(
         title: Text('Expense Statistics'),
@@ -42,7 +41,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
                       setState(() {
                         currentChart = BarChartDaily();
                         currentExpenseListFunc =
-                            mainEngine.dailyExpenseAndIncomeLast7DaysList();
+                            mainEngine.dailyExpenseAndIncomeLast7DaysList;
                       });
                     },
                     child: Container(
@@ -61,9 +60,9 @@ class _StatisticsPageState extends State<StatisticsPage> {
                   GestureDetector(
                     onTap: () {
                       setState(() {
-                        currentChart = BarChartWidget();
-                        currentExpenseListFunc = dbHelper
-                            .getWeeklyExpensesAndIncomeForLast7DaysList();
+                        currentChart = BarChartWeekly();
+                        currentExpenseListFunc =
+                            mainEngine.weeklyExpenseAndIncomeList;
                       });
                     },
                     child: Container(
@@ -82,11 +81,9 @@ class _StatisticsPageState extends State<StatisticsPage> {
                   GestureDetector(
                     onTap: () {
                       setState(() {
-                        currentChart =
-                            BarChartMonthly(year: DateTime.now().year);
+                        currentChart = BarChartMonthly();
                         currentExpenseListFunc =
-                            dbHelper.getMonthlyExpensesAndIncomeList(
-                                DateTime.now().year);
+                            mainEngine.monthlyExpenseAndIncomeList;
                       });
                     },
                     child: Container(
@@ -121,96 +118,79 @@ class _StatisticsPageState extends State<StatisticsPage> {
 }
 
 class ExpenseList extends StatelessWidget {
-  final Future<List<Map<String, dynamic>>> inputFunction;
+  final List<Map<String, dynamic>> inputFunction;
 
   ExpenseList({Key? key, required this.inputFunction}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: inputFunction,
-      builder: (context, AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return Center(child: Text('No data available'));
-        } else {
-          List<Map<String, dynamic>> data = snapshot.data!;
-          return Expanded(
-            child: ListView.builder(
-              itemCount: data.length,
-              itemBuilder: (context, index) {
-                var transaction = data[index];
-                bool isIncome = transaction["amountType"] == 'income';
-                IconData arrowIcon =
-                    isIncome ? Icons.arrow_upward : Icons.arrow_downward;
-                Color amountColor = isIncome ? Colors.green : Colors.red;
-                double amountValue =
-                    transaction["amount"] * (isIncome ? 1 : -1);
+    print(inputFunction);
+    return Expanded(
+      child: ListView.builder(
+        itemCount: inputFunction.length,
+        itemBuilder: (context, index) {
+          var transaction = inputFunction[index];
+          bool isIncome = transaction["amountType"] == 'income';
+          IconData arrowIcon =
+              isIncome ? Icons.arrow_upward : Icons.arrow_downward;
+          Color amountColor = isIncome ? Colors.green : Colors.red;
+          double amountValue = transaction["amount"] * (isIncome ? 1 : -1);
 
-                return Padding(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 8.0, horizontal: 16.0),
-                  child: GestureDetector(
-                    onLongPress: () {
-                      Provider.of<MainEngine>(context, listen: false)
-                          .deleteExpense(
-                              transaction['datetime'], transaction['amount']);
-                    },
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      color: Colors.white,
-                      elevation: 2,
-                      child: ListTile(
-                        leading: Icon(
-                          arrowIcon,
-                          color: amountColor,
-                        ),
-                        title: Text(
-                          transaction["title"],
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        subtitle: Text(
-                          'Date: ${DateTime.parse(transaction["datetime"]).day}/${DateTime.parse(transaction["datetime"]).month}',
-                          style: TextStyle(
-                            color: Colors.grey[700],
-                          ),
-                        ),
-                        trailing: Text(
-                          '${amountValue.toStringAsFixed(2)}',
-                          style: TextStyle(
-                            color: amountColor,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
+          return Padding(
+            padding:
+                const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            child: GestureDetector(
+              onLongPress: () {
+                Provider.of<MainEngine>(context, listen: false).deleteExpense(
+                    transaction['datetime'], transaction['amount']);
+              },
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                color: Colors.white,
+                elevation: 2,
+                child: ListTile(
+                  leading: Icon(
+                    arrowIcon,
+                    color: amountColor,
+                  ),
+                  title: Text(
+                    transaction["title"],
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                );
-              },
+                  subtitle: Text(
+                    'Date: ${DateTime.parse(transaction["datetime"]).day}/${DateTime.parse(transaction["datetime"]).month}',
+                    style: TextStyle(
+                      color: Colors.grey[700],
+                    ),
+                  ),
+                  trailing: Text(
+                    '${amountValue.toStringAsFixed(2)}',
+                    style: TextStyle(
+                      color: amountColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
             ),
           );
-        }
-      },
+        },
+      ),
     );
   }
 }
 
-class BarChartWidget extends StatelessWidget {
+class BarChartWeekly extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final dbHelper = DatabaseHelper();
-
     return FutureBuilder<List<Map<String, dynamic>>>(
-      future: dbHelper.getWeeklyExpensesAndIncome(
-          2024, 7), // Example year and month
+      future: Provider.of<MainEngine>(context)
+          .weeklyExpenseAndIncome(), // Example year and month
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
@@ -269,16 +249,12 @@ class BarChartWidget extends StatelessWidget {
 }
 
 class BarChartMonthly extends StatelessWidget {
-  final int year;
-
-  BarChartMonthly({required this.year});
+  BarChartMonthly({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final dbHelper = DatabaseHelper();
-
     return FutureBuilder<List<Map<String, dynamic>>>(
-      future: dbHelper.getMonthlyExpensesAndIncome(year),
+      future: Provider.of<MainEngine>(context).monthlyExpenseAndIncome(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
@@ -339,11 +315,8 @@ class BarChartMonthly extends StatelessWidget {
 class BarChartDaily extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final dbHelper = DatabaseHelper();
-
     return FutureBuilder<List<Map<String, dynamic>>>(
       future: Provider.of<MainEngine>(context).dailyExpenseAndIncomeLast7Days(),
-      // future:  dbHelper.getDailyExpensesAndIncomeForLast7Days(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());

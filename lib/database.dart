@@ -146,7 +146,7 @@ class DatabaseHelper {
   Future<List<Map<String, dynamic>>> getWeeklyExpensesAndIncomeList(int year, int month) async {
     Database db = await database;
     return await db.rawQuery('''
-    SELECT 
+    SELECT *,
       strftime('%Y-%W', datetime) AS week,
       title,
       amountType,
@@ -206,7 +206,7 @@ class DatabaseHelper {
   Future<List<Map<String, dynamic>>> getMonthlyExpensesAndIncomeList(int year) async {
     Database db = await database;
     return await db.rawQuery('''
-    SELECT 
+    SELECT *,
       strftime('%Y-%m', datetime) AS month,
       title,
       amountType,
