@@ -82,8 +82,8 @@ class MainEngine extends ChangeNotifier {
     return await dbHelper.getTotalMoneyForCurrentMonth();
   }
 
-  void deleteExpense(String datetime, double amount) {
-    dbHelper.deleteRow(datetime, amount);
+  void deleteExpense(String datetime) {
+    dbHelper.deleteRow(datetime);
     notifyListeners();
   }
 

@@ -36,12 +36,12 @@ class DatabaseHelper {
     ''');
   }
 
-  Future<void> deleteRow(String datetime, double amount) async {
+  Future<void> deleteRow(String datetime) async {
     Database db = await database;
     await db.delete(
       tableName,
-      where: 'datetime = ? AND amount = ?',
-      whereArgs: [datetime, amount],
+      where: 'datetime = ?',
+      whereArgs: [datetime],
     );
   }
 

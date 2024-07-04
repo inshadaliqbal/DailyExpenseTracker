@@ -142,7 +142,7 @@ class ExpenseList extends StatelessWidget {
             child: GestureDetector(
               onLongPress: () {
                 Provider.of<MainEngine>(context, listen: false).deleteExpense(
-                    transaction['datetime'], transaction['amount']);
+                    transaction['datetime']);
               },
               child: Card(
                 shape: RoundedRectangleBorder(

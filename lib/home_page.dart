@@ -1,3 +1,6 @@
+import 'dart:ui';
+
+import 'package:dailyexpensetracker/expense_card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:dailyexpensetracker/provider_engine.dart';
@@ -209,36 +212,61 @@ class _HomePageState extends State<HomePage> {
 
                               return Padding(
                                 padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                                child: Card(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  elevation: 2,
-                                  child: ListTile(
-                                    leading: Icon(
-                                      isIncome ? Icons.arrow_upward : Icons.arrow_downward,
-                                      color: isIncome ? Colors.green : Colors.red,
-                                      size: 32, // Adjust size as needed
+                                child: GestureDetector(
+                                  onLongPress: (){
+                                    mainEngine.deleteExpense(transaction["datetime"]);
+                                  },
+                                  onTap: (){
+                                    showGeneralDialog(
+                                      context: context,
+                                      barrierDismissible: true,
+                                      barrierLabel: 'Label',
+                                      pageBuilder: (context, anim1, anim2) {
+                                        return BackdropFilter(
+                                          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                                          child: ExpenseCard(expenseDetail: transaction,)
+                                        );
+                                      },
+                                      transitionBuilder: (context, anim1, anim2, child) {
+                                        return FadeTransition(
+                                          opacity: anim1,
+                                          child: child,
+                                        );
+                                      },
+                                      transitionDuration: Duration(milliseconds: 200),
+                                    );
+                                  },
+                                  child: Card(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
                                     ),
-                                    title: Text(
-                                      transaction["title"],
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
+                                    elevation: 2,
+                                    child: ListTile(
+                                      leading: Icon(
+                                        isIncome ? Icons.arrow_upward : Icons.arrow_downward,
+                                        color: isIncome ? Colors.green : Colors.red,
+                                        size: 32, // Adjust size as needed
                                       ),
-                                    ),
-                                    subtitle: Text(
-                                      'Time: ${DateTime.parse(transaction["datetime"]).hour} : ${DateTime.parse(transaction["datetime"]).minute}', // Display absolute value
-                                      style: TextStyle(
-                                        fontSize: 14,
+                                      title: Text(
+                                        transaction["title"],
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
                                       ),
-                                    ),
-                                    trailing: Text(
-                                      '${isIncome ? '+' : '-'}\$${transaction["amount"].abs().toStringAsFixed(2)}',
-                                      style: TextStyle(
-                                        color: isIncome ? Colors.green : Colors.red, // Green for income, red for spend
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
+                                      subtitle: Text(
+                                        'Time: ${DateTime.parse(transaction["datetime"]).hour} : ${DateTime.parse(transaction["datetime"]).minute}', // Display absolute value
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                      trailing: Text(
+                                        '${isIncome ? '+' : '-'}\$${transaction["amount"].abs().toStringAsFixed(2)}',
+                                        style: TextStyle(
+                                          color: isIncome ? Colors.green : Colors.red, // Green for income, red for spend
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
                                       ),
                                     ),
                                   ),
