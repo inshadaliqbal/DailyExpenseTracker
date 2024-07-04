@@ -19,7 +19,7 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: BlurryHUD(
           childWidget: Padding(
@@ -41,7 +41,7 @@ class LoginPage extends StatelessWidget {
                     ),
                     Text(
                       'Please login to your account',
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: Colors.black),
                     ),
                     MainTextFieldSign(
                       label: 'EMAIL',

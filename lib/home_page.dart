@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:dailyexpensetracker/provider_engine.dart';
 import 'package:dailyexpensetracker/appbars.dart';
@@ -19,7 +20,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<MainEngine>(context, listen: false).fetchData();
     });
   }
@@ -40,8 +41,8 @@ class _HomePageState extends State<HomePage> {
                     decoration: BoxDecoration(
                       color: Colors.black,
                       borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(40),
-                        bottomRight: Radius.circular(40),
+                        bottomLeft: Radius.circular(20),
+                        bottomRight: Radius.circular(20),
                       ),
                     ),
                     padding: EdgeInsets.all(16.0),
@@ -71,10 +72,10 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                 ),
                                 Text(
-                                  '',
+                                  'User',
                                   style: TextStyle(
                                     color: Colors.white,
-                                    fontSize: 18,
+                                    fontSize: 25,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -123,9 +124,11 @@ class _HomePageState extends State<HomePage> {
                               ),
                             ),
                             Text(
-                              '${DateTime.now().day} , ${DateTime.now().month}',
+                              '${DateFormat('EEEE').format(DateTime.now())}',
                               style: TextStyle(
-                                color: Colors.grey,
+                                color: Colors.black,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 20
                               ),
                             ),
                           ],
@@ -144,3 +147,4 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+

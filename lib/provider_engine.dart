@@ -222,6 +222,7 @@ class MainEngine extends ChangeNotifier {
 
   void deleteExpense(String datetime){
     dbHelper.deleteRow(datetime);
+    fetchData();
     notifyListeners();
   }
 

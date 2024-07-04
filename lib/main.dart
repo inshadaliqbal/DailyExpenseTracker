@@ -12,18 +12,20 @@ import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
 
+
 void main() {
   initNotifications();
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
   FlutterLocalNotificationsPlugin();
   flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
       AndroidFlutterLocalNotificationsPlugin>()!.requestNotificationsPermission();
-
-
   runApp(
     DailyExpenseTracker(),
   );
 }
+
+
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 class DailyExpenseTracker extends StatelessWidget {
 
@@ -32,10 +34,14 @@ class DailyExpenseTracker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
     return ChangeNotifierProvider(
       create: (context) => MainEngine(),
       builder: (context, mainEngine) {
         return MaterialApp(
+          navigatorKey: navigatorKey,
           initialRoute: WelcomeScreen.welcome_screen,
           theme: buildThemeData(),
           routes: {

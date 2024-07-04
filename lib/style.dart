@@ -58,19 +58,19 @@ BoxDecoration buildHomePageBoxDecoration() {
 InputDecoration MainTextFieldInputDecoration(String? label) {
   return InputDecoration(
     labelText: label,
-    labelStyle: const TextStyle(letterSpacing: 3),
+    labelStyle: const TextStyle(letterSpacing: 3,color: Colors.black),
     filled: true,
-    fillColor: Colors.black,
+    fillColor: Colors.white,
     border: OutlineInputBorder(
-      borderSide: const BorderSide(width: 1, color: Colors.white),
+      borderSide: const BorderSide(width: 1, color: Colors.black),
       borderRadius: BorderRadius.circular(20),
     ),
     enabledBorder: OutlineInputBorder(
-      borderSide: const BorderSide(width: 1, color: Colors.white),
+      borderSide: const BorderSide(width: 1, color: Colors.black),
       borderRadius: BorderRadius.circular(30),
     ),
     focusedBorder: OutlineInputBorder(
-      borderSide: const BorderSide(width: 1, color: Colors.white),
+      borderSide: const BorderSide(width: 1, color: Colors.black),
       borderRadius: BorderRadius.circular(10),
     ),
     contentPadding: const EdgeInsets.symmetric(horizontal: 10),

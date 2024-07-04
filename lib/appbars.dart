@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 AppBar buildHomePageAppBar() {
   return AppBar(
+    automaticallyImplyLeading: false,
     title: Center(
       child: Text(
         'Daily Expense Tracker',

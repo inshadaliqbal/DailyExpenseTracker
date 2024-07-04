@@ -11,12 +11,9 @@ import 'package:provider/provider.dart';
 import 'provider_engine.dart';
 import 'package:flutter/material.dart';
 
-
 class HomePageExpenseRow extends StatelessWidget {
   MainEngine mainEngine;
-  HomePageExpenseRow({
-    super.key,required this.mainEngine
-  });
+  HomePageExpenseRow({super.key, required this.mainEngine});
 
   @override
   Widget build(BuildContext context) {
@@ -35,16 +32,15 @@ class HomePageExpenseRow extends StatelessWidget {
                 children: [
                   Text(
                     'Today\'s Cash In',
-                    style: TextStyle(fontSize: 16,color: Colors.white),
+                    style: TextStyle(fontSize: 16, color: Colors.white),
                   ),
                   SizedBox(height: 8),
                   Text(
                     '\$${mainEngine.todaysCashIn.toStringAsFixed(2)}',
                     style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white
-                    ),
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
                   ),
                 ],
               ),
@@ -64,16 +60,15 @@ class HomePageExpenseRow extends StatelessWidget {
                 children: [
                   Text(
                     'Today\'s Expense',
-                    style: TextStyle(fontSize: 16,color: Colors.white),
+                    style: TextStyle(fontSize: 16, color: Colors.white),
                   ),
                   SizedBox(height: 8),
                   Text(
                     '\$${mainEngine.todaysExpense.toStringAsFixed(2)}',
                     style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white
-                    ),
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
                   ),
                 ],
               ),
@@ -93,82 +88,86 @@ class HomePageExpenseList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: ListView.builder(
-        itemCount:
-        mainEngine.todaysTransactionList.length,
+        itemCount: mainEngine.todaysTransactionList.length,
         itemBuilder: (context, index) {
-          var transaction =
-          mainEngine.todaysTransactionList[index];
+          var transaction = mainEngine.todaysTransactionList[index];
           print(transaction["datetime"]);
           bool isIncome = transaction["amountType"] == 'income';
-          bool isSpend = transaction["amountType"] == 'spend';
-          bool isPositive = transaction["amount"] >= 0;
-
-          return Padding(
-            padding:
-            const EdgeInsets.symmetric(vertical: 8.0),
-            child: GestureDetector(
-              onLongPress: () {
-                mainEngine.deleteExpense(transaction["datetime"]);
-              },
-              onTap: () {
-                showGeneralDialog(
-                  context: context,
-                  barrierDismissible: true,
-                  barrierLabel: 'Label',
-                  pageBuilder: (context, anim1, anim2) {
-                    return BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                        child: ExpenseCard(
-                          expenseDetail: transaction,
-                        ));
-                  },
-                  transitionBuilder: (context, anim1, anim2, child) {
-                    return FadeTransition(
-                      opacity: anim1,
-                      child: child,
-                    );
-                  },
-                  transitionDuration: Duration(milliseconds: 200),
-                );
-              },
-              child: Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                elevation: 2,
-                child: ListTile(
-                  leading: Icon(
-                    isIncome ? Icons.arrow_upward : Icons.arrow_downward,
-                    color: isIncome ? Colors.green : Colors.red,
-                    size: 32, // Adjust size as needed
+          print(transaction);
+          if (transaction['title'] == null) {
+            return Center(
+              child: Text(
+                'No Data; Add Transactions',
+                style: TextStyle(color: Colors.black, fontSize: 20),
+              ),
+            );
+          } else {
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: GestureDetector(
+                onLongPress: () {
+                  mainEngine.deleteExpense(transaction["datetime"]);
+                },
+                onTap: () {
+                  showGeneralDialog(
+                    context: context,
+                    barrierDismissible: true,
+                    barrierLabel: 'Label',
+                    pageBuilder: (context, anim1, anim2) {
+                      return BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                          child: ExpenseCard(
+                            expenseDetail: transaction,
+                          ));
+                    },
+                    transitionBuilder: (context, anim1, anim2, child) {
+                      return FadeTransition(
+                        opacity: anim1,
+                        child: child,
+                      );
+                    },
+                    transitionDuration: Duration(milliseconds: 200),
+                  );
+                },
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  title: Text(
-                    transaction["title"],
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
+                  elevation: 2,
+                  child: ListTile(
+                    leading: Icon(
+                      isIncome ? Icons.arrow_upward : Icons.arrow_downward,
+                      color: isIncome ? Colors.green : Colors.red,
+                      size: 32, // Adjust size as needed
                     ),
-                  ),
-                  subtitle: Text(
-                    'Time: ${DateTime.parse(transaction["datetime"]).hour} : ${DateTime.parse(transaction["datetime"]).minute}', // Display absolute value
-                    style: TextStyle(
-                      fontSize: 14,
+                    title: Text(
+                      transaction["title"],
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
                     ),
-                  ),
-                  trailing: Text(
-                    '${isIncome ? '+' : '-'}\$${transaction["amount"].abs().toStringAsFixed(2)}',
-                    style: TextStyle(
-                      color: isIncome
-                          ? Colors.green
-                          : Colors.red, // Green for income, red for spend
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
+                    subtitle: Text(
+                      'Time: ${DateTime.parse(transaction["datetime"]).hour} : ${DateTime.parse(transaction["datetime"]).minute}', // Display absolute value
+                      style: TextStyle(
+                        fontSize: 14,
+                      ),
+                    ),
+                    trailing: Text(
+                      '${isIncome ? '+' : '-'}\$${transaction["amount"].abs().toStringAsFixed(2)}',
+                      style: TextStyle(
+                        color: isIncome
+                            ? Colors.green
+                            : Colors.red, // Green for income, red for spend
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          );
+            );
+          }
         },
       ),
     );
@@ -178,7 +177,8 @@ class HomePageExpenseList extends StatelessWidget {
 class ExpenseListStatisticsPage extends StatelessWidget {
   final List<Map<String, dynamic>> inputFunction;
 
-  ExpenseListStatisticsPage({Key? key, required this.inputFunction}) : super(key: key);
+  ExpenseListStatisticsPage({Key? key, required this.inputFunction})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -192,11 +192,11 @@ class ExpenseListStatisticsPage extends StatelessWidget {
 
           return Padding(
             padding:
-            const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
             child: GestureDetector(
               onLongPress: () {
-                Provider.of<MainEngine>(context, listen: false).deleteExpense(
-                    transaction['datetime']);
+                Provider.of<MainEngine>(context, listen: false)
+                    .deleteExpense(transaction['datetime']);
               },
               onTap: () {
                 showGeneralDialog(
@@ -238,7 +238,7 @@ class ExpenseListStatisticsPage extends StatelessWidget {
                     ),
                   ),
                   subtitle: Text(
-                    'Time: ${DateTime.parse(transaction["datetime"]).hour} : ${DateTime.parse(transaction["datetime"]).minute}', // Display absolute value
+                    'Date: ${DateTime.parse(transaction["datetime"]).toString().substring(0, 10)}', // Display absolute value
                     style: TextStyle(
                       fontSize: 14,
                     ),
@@ -371,9 +371,12 @@ class DateTimePickerWidget extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        AddExpensesPageButton(buttonTitle: 'Pick Date And Time',buttonFunction: () {
-          pickDateTime(context);
-        },),
+        AddExpensesPageButton(
+          buttonTitle: 'Pick Date And Time',
+          buttonFunction: () {
+            pickDateTime(context);
+          },
+        ),
         SizedBox(height: 20),
         Text(
           _selectedDateTime != null
@@ -385,7 +388,6 @@ class DateTimePickerWidget extends StatelessWidget {
     );
   }
 }
-
 
 class LabelAddExpensePages extends StatelessWidget {
   String? text;
@@ -411,9 +413,8 @@ class AddExpensesTextField extends StatelessWidget {
   Function(String)? onChanged;
   List<TextInputFormatter>? inputFormatters;
   TextInputType? keyboardType;
-  AddExpensesTextField({
-    super.key,this.inputFormatters,this.keyboardType,this.onChanged
-  });
+  AddExpensesTextField(
+      {super.key, this.inputFormatters, this.keyboardType, this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -439,22 +440,14 @@ class AddExpensesTextField extends StatelessWidget {
 }
 
 class MainButton extends StatelessWidget {
-
   String? title;
   Function? buttonFunction;
-  MainButton({
-    super.key,@required this.title,@required this.buttonFunction
-  });
+  MainButton({super.key, @required this.title, @required this.buttonFunction});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Colors.blue, Colors.pink],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
@@ -470,10 +463,11 @@ class MainButton extends StatelessWidget {
           buttonFunction!();
         },
         style: TextButton.styleFrom(
-          padding: EdgeInsets.symmetric(vertical: 15, horizontal: 30),
-          // backgroundColor: Colors.white, // For the text color
+          backgroundColor: Colors.white,
+          side: BorderSide(
+              color: Colors.black, width: 1), // Border color and width
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(8), // Border radius
           ),
         ),
         child: Text(
@@ -482,8 +476,7 @@ class MainButton extends StatelessWidget {
               fontSize: 20,
               fontWeight: FontWeight.w600,
               letterSpacing: 2,
-              color: Colors.white
-          ),
+              color: Colors.black),
         ),
       ),
     );
@@ -513,13 +506,11 @@ class buildSocialButton extends StatelessWidget {
   }
 }
 
-
 class MainTextField extends StatelessWidget {
   String? hintText;
   Function? textfieldFunction;
-  MainTextField({
-    super.key,@required this.hintText,@required  this.textfieldFunction
-  });
+  MainTextField(
+      {super.key, @required this.hintText, @required this.textfieldFunction});
 
   @override
   Widget build(BuildContext context) {
@@ -528,21 +519,10 @@ class MainTextField extends StatelessWidget {
         textfieldFunction!(value);
       },
       obscureText: true,
-      decoration: InputDecoration(
-        filled: true,
-        fillColor: Colors.grey[200],
-        hintText: hintText,
-        contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide.none,
-        ),
-      ),
+      decoration: MainTextFieldInputDecoration('Name'),
     );
   }
 }
-
-
 
 class BlurryHUD extends StatelessWidget {
   final Widget childWidget;
@@ -595,12 +575,12 @@ class ProgressIndicatorContainer extends StatelessWidget {
   }
 }
 
-
 class MainTextFieldSign extends StatelessWidget {
   final Function changeFunction;
   final String? label;
 
-  MainTextFieldSign({Key? key, required this.label, required this.changeFunction})
+  MainTextFieldSign(
+      {Key? key, required this.label, required this.changeFunction})
       : super(key: key);
 
   @override
@@ -609,7 +589,7 @@ class MainTextFieldSign extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 10),
       child: Form(
         child: TextFormField(
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Colors.black),
           keyboardType: TextInputType.emailAddress,
           onChanged: (value) => changeFunction(value),
           textAlign: TextAlign.left,
@@ -626,7 +606,8 @@ class MainTextFieldPassword extends StatelessWidget {
   final Function changeFunction;
   final String? label;
 
-  MainTextFieldPassword({Key? key, required this.label, required this.changeFunction})
+  MainTextFieldPassword(
+      {Key? key, required this.label, required this.changeFunction})
       : super(key: key);
 
   @override
@@ -671,4 +652,3 @@ String? _validatePassword(String? value) {
   }
   return null;
 }
-

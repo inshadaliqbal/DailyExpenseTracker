@@ -43,6 +43,7 @@ class _AddIncomeState extends State<AddIncome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(
           'Add Income',

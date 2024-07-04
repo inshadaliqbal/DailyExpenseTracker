@@ -2,6 +2,7 @@ import 'package:dailyexpensetracker/appbars.dart';
 import 'package:dailyexpensetracker/buttons.dart';
 import 'package:dailyexpensetracker/charts.dart';
 import 'package:dailyexpensetracker/extracted_widgets.dart';
+import 'package:dailyexpensetracker/main.dart';
 import 'package:flutter/material.dart';
 import 'package:dailyexpensetracker/database.dart';
 import 'package:dailyexpensetracker/provider_engine.dart';
@@ -19,11 +20,12 @@ class StatisticsPage extends StatefulWidget {
 class _StatisticsPageState extends State<StatisticsPage> {
   final dbHelper = DatabaseHelper();
   Widget currentChart = BarChartDaily();
+  List<Map<String, dynamic>> currentExpenseListFunc = Provider.of<MainEngine>(navigatorKey.currentState!.context).dailyExpenseAndIncomeLast7DaysList;
 
 
   @override
   Widget build(BuildContext context) {
-    List<Map<String, dynamic>> currentExpenseListFunc = Provider.of<MainEngine>(context).dailyExpenseAndIncomeLast7DaysList;
+
     return Scaffold(
       appBar: buildAppBarStatistics(),
       body: Consumer<MainEngine>(builder: (context, mainEngine, child) {

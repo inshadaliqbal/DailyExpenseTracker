@@ -24,7 +24,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: BlurryHUD(
           childWidget: Padding(
@@ -47,7 +47,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     ),
                     Text(
                       'Please register',
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: Colors.black),
                     ),
                     MainTextField(
                         hintText: 'Name',

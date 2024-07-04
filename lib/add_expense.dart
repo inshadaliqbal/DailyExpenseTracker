@@ -43,6 +43,7 @@ class _AddExpenseState extends State<AddExpense> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: buildAppBarAddExpense(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

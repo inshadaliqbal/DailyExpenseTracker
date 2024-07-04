@@ -57,7 +57,7 @@ const kProfileMainTextStyle = TextStyle(
 );
 
 const kMainTextstyleWelcomePage = TextStyle(
-    color: Colors.white,
+    color: Colors.black,
     fontSize: 40,
     fontWeight: FontWeight.w400,
     letterSpacing: 2,
