@@ -1,14 +1,12 @@
 import 'package:dailyexpensetracker/add_expense.dart';
 import 'package:dailyexpensetracker/add_income.dart';
 import 'package:dailyexpensetracker/bottombar.dart';
-import 'package:dailyexpensetracker/database.dart';
-import 'package:dailyexpensetracker/expense.dart';
 import 'package:dailyexpensetracker/home_page.dart';
 import 'package:dailyexpensetracker/provider_engine.dart';
-import 'package:dailyexpensetracker/statistics.dart';
+import 'package:dailyexpensetracker/statistics_page.dart';
+import 'package:dailyexpensetracker/style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:omni_datetime_picker/omni_datetime_picker.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -23,18 +21,20 @@ class DailyExpenseTracker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-        create: (context) => MainEngine(),
-        builder: (context, MainEngine) {
-          return MaterialApp(
-            initialRoute: BottomBar.bottomBar,
-            routes: {
-              HomePage.homePage: (context) => HomePage(),
-              BottomBar.bottomBar: (context) => BottomBar(),
-              AddExpense.addExpense: (context) => AddExpense(),
-              AddIncome.addIncome: (context) => AddIncome(),
-              StatisticsPage.statisticPage: (context) => StatisticsPage()
-            },
-          );
-        });
+      create: (context) => MainEngine(),
+      builder: (context, mainEngine) {
+        return MaterialApp(
+          initialRoute: BottomBar.bottomBar,
+          theme: buildThemeData(),
+          routes: {
+            HomePage.homePage: (context) => HomePage(),
+            BottomBar.bottomBar: (context) => BottomBar(),
+            AddExpense.addExpense: (context) => AddExpense(),
+            AddIncome.addIncome: (context) => AddIncome(),
+            StatisticsPage.statisticPage: (context) => StatisticsPage()
+          },
+        );
+      },
+    );
   }
 }

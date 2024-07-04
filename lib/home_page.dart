@@ -1,6 +1,9 @@
 import 'dart:ui';
 
+import 'package:dailyexpensetracker/appbars.dart';
 import 'package:dailyexpensetracker/expense_card.dart';
+import 'package:dailyexpensetracker/extracted_widgets.dart';
+import 'package:dailyexpensetracker/style.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:dailyexpensetracker/provider_engine.dart';
@@ -19,28 +22,14 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<MainEngine>(context, listen: false)
-          .fetchData();
+      Provider.of<MainEngine>(context, listen: false).fetchData();
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Center(
-          child: Text(
-            'Daily Expense Tracker',
-            style: TextStyle(
-                color: Colors.black,
-                fontSize: 20,
-                letterSpacing: 1,
-                fontWeight: FontWeight.w500),
-          ),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 0,
-      ),
+      appBar: buildHomePageAppBar(),
       body: SafeArea(
         child: Consumer<MainEngine>(
           builder: (context, mainEngine, child) {
@@ -49,11 +38,7 @@ class _HomePageState extends State<HomePage> {
                 Expanded(
                   flex: 3,
                   child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.black,
-                        borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(20),
-                            bottomRight: Radius.circular(20))),
+                    decoration: buildHomePageBoxDecoration(),
                     padding: EdgeInsets.all(16.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -109,66 +94,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                         SizedBox(height: 20),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Card(
-                                color: Colors.greenAccent,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                        'Today\'s Cash In',
-                                        style: TextStyle(fontSize: 16),
-                                      ),
-                                      SizedBox(height: 8),
-                                      Text(
-                                        '\$${mainEngine.todaysCashIn.toStringAsFixed(2)}',
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: 10),
-                            Expanded(
-                              child: Card(
-                                color: Colors.redAccent.shade100,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                        'Today\'s Expense',
-                                        style: TextStyle(fontSize: 16),
-                                      ),
-                                      SizedBox(height: 8),
-                                      Text(
-                                        '\$${mainEngine.todaysExpense.toStringAsFixed(2)}',
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                        HomePageExpenseRow(mainEngine: mainEngine),
                       ],
                     ),
                   ),
@@ -200,83 +126,7 @@ class _HomePageState extends State<HomePage> {
                           ],
                         ),
                         SizedBox(height: 10),
-                        Expanded(
-                          child: ListView.builder(
-                            itemCount: Provider.of<MainEngine>(context).todaysTransactionList.length,
-                            itemBuilder: (context, index) {
-                              var transaction = Provider.of<MainEngine>(context).todaysTransactionList[index];
-                              print(transaction["datetime"]);
-                              bool isIncome = transaction["amountType"] == 'income';
-                              bool isSpend = transaction["amountType"] == 'spend';
-                              bool isPositive = transaction["amount"] >= 0;
-
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                                child: GestureDetector(
-                                  onLongPress: (){
-                                    mainEngine.deleteExpense(transaction["datetime"]);
-                                  },
-                                  onTap: (){
-                                    showGeneralDialog(
-                                      context: context,
-                                      barrierDismissible: true,
-                                      barrierLabel: 'Label',
-                                      pageBuilder: (context, anim1, anim2) {
-                                        return BackdropFilter(
-                                          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                                          child: ExpenseCard(expenseDetail: transaction,)
-                                        );
-                                      },
-                                      transitionBuilder: (context, anim1, anim2, child) {
-                                        return FadeTransition(
-                                          opacity: anim1,
-                                          child: child,
-                                        );
-                                      },
-                                      transitionDuration: Duration(milliseconds: 200),
-                                    );
-                                  },
-                                  child: Card(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    elevation: 2,
-                                    child: ListTile(
-                                      leading: Icon(
-                                        isIncome ? Icons.arrow_upward : Icons.arrow_downward,
-                                        color: isIncome ? Colors.green : Colors.red,
-                                        size: 32, // Adjust size as needed
-                                      ),
-                                      title: Text(
-                                        transaction["title"],
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                      subtitle: Text(
-                                        'Time: ${DateTime.parse(transaction["datetime"]).hour} : ${DateTime.parse(transaction["datetime"]).minute}', // Display absolute value
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                      trailing: Text(
-                                        '${isIncome ? '+' : '-'}\$${transaction["amount"].abs().toStringAsFixed(2)}',
-                                        style: TextStyle(
-                                          color: isIncome ? Colors.green : Colors.red, // Green for income, red for spend
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-
-
+                        HomePageExpenseList(mainEngine: mainEngine),
                       ],
                     ),
                   ),
@@ -289,3 +139,4 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+
