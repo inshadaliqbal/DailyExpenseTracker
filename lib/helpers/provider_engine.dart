@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:dailyexpensetracker/database.dart';
+import 'package:dailyexpensetracker/helpers/database.dart';
 import 'package:dailyexpensetracker/secret_key.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';

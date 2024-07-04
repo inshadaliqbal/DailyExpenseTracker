@@ -1,8 +1,8 @@
-import 'package:dailyexpensetracker/bottom_sheet.dart';
-import 'package:dailyexpensetracker/home_page.dart';
-import 'package:dailyexpensetracker/add_expense.dart';
-import 'package:dailyexpensetracker/provider_engine.dart';
-import 'package:dailyexpensetracker/statistics_page.dart';
+import 'package:dailyexpensetracker/pages/bottom_sheet.dart';
+import 'package:dailyexpensetracker/pages/home_page.dart';
+import 'package:dailyexpensetracker/pages/add_expense.dart';
+import 'package:dailyexpensetracker/helpers/provider_engine.dart';
+import 'package:dailyexpensetracker/pages/statistics_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

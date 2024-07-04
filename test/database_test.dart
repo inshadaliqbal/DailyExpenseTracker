@@ -1,4 +1,4 @@
-import 'package:dailyexpensetracker/database.dart';
+import 'package:dailyexpensetracker/helpers/database.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:sqflite/sqflite.dart';

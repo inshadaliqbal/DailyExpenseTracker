@@ -1,8 +1,8 @@
-import 'package:dailyexpensetracker/bottombar.dart';
-import 'package:dailyexpensetracker/constants.dart';
-import 'package:dailyexpensetracker/extracted_widgets.dart';
-import 'package:dailyexpensetracker/home_page.dart';
-import 'package:dailyexpensetracker/provider_engine.dart';
+import 'package:dailyexpensetracker/pages/bottombar.dart';
+import 'package:dailyexpensetracker/style/constants.dart';
+import 'package:dailyexpensetracker/widgets/extracted_widgets.dart';
+import 'package:dailyexpensetracker/pages/home_page.dart';
+import 'package:dailyexpensetracker/helpers/provider_engine.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

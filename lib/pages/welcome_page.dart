@@ -1,10 +1,10 @@
-import 'package:dailyexpensetracker/extracted_widgets.dart';
-import 'package:dailyexpensetracker/provider_engine.dart';
-import 'package:dailyexpensetracker/sign_in_page.dart';
-import 'package:dailyexpensetracker/sign_up_page.dart';
+import 'package:dailyexpensetracker/widgets/extracted_widgets.dart';
+import 'package:dailyexpensetracker/helpers/provider_engine.dart';
+import 'package:dailyexpensetracker/pages/sign_in_page.dart';
+import 'package:dailyexpensetracker/pages/sign_up_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'constants.dart';
+import '../style/constants.dart';
 class WelcomeScreen extends StatefulWidget {
   static const welcome_screen = 'WelcomeScreen';
 

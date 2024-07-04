@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:dailyexpensetracker/provider_engine.dart';
-import 'package:dailyexpensetracker/appbars.dart';
-import 'package:dailyexpensetracker/extracted_widgets.dart';
+import 'package:dailyexpensetracker/helpers/provider_engine.dart';
+import 'package:dailyexpensetracker/widgets/appbars.dart';
+import 'package:dailyexpensetracker/widgets/extracted_widgets.dart';
 
 class HomePage extends StatefulWidget {
 

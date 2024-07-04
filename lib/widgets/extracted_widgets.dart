@@ -1,14 +1,14 @@
 import 'dart:ui';
 
 import 'package:blurry_modal_progress_hud/blurry_modal_progress_hud.dart';
-import 'package:dailyexpensetracker/buttons.dart';
-import 'package:dailyexpensetracker/expense_card.dart';
-import 'package:dailyexpensetracker/style.dart';
+import 'package:dailyexpensetracker/widgets/buttons.dart';
+import 'package:dailyexpensetracker/widgets/expense_card.dart';
+import 'package:dailyexpensetracker/style/style.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:omni_datetime_picker/omni_datetime_picker.dart';
 import 'package:provider/provider.dart';
-import 'provider_engine.dart';
+import '../helpers/provider_engine.dart';
 import 'package:flutter/material.dart';
 
 class HomePageExpenseRow extends StatelessWidget {

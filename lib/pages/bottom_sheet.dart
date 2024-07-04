@@ -1,5 +1,5 @@
-import 'package:dailyexpensetracker/add_expense.dart';
-import 'package:dailyexpensetracker/add_income.dart';
+import 'package:dailyexpensetracker/pages/add_expense.dart';
+import 'package:dailyexpensetracker/pages/add_income.dart';
 import 'package:flutter/material.dart';
 
 class MyBottomSheetContent extends StatelessWidget {

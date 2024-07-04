@@ -59,7 +59,7 @@ const kProfileMainTextStyle = TextStyle(
 const kMainTextstyleWelcomePage = TextStyle(
     color: Colors.black,
     fontSize: 40,
-    fontWeight: FontWeight.w400,
+    fontWeight: FontWeight.w600,
     letterSpacing: 2,
     fontFamily: 'highland');
 
