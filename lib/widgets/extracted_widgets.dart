@@ -34,7 +34,7 @@ class HomePageExpenseRow extends StatelessWidget {
                     'Today\'s Cash In',
                     style: TextStyle(fontSize: 16, color: Colors.white),
                   ),
-                  SizedBox(height: 8),
+                  SizedBox(height: 5),
                   Text(
                     '\$${mainEngine.todaysCashIn.toStringAsFixed(2)}',
                     style: TextStyle(
@@ -62,7 +62,7 @@ class HomePageExpenseRow extends StatelessWidget {
                     'Today\'s Expense',
                     style: TextStyle(fontSize: 16, color: Colors.white),
                   ),
-                  SizedBox(height: 8),
+                  SizedBox(height: 5),
                   Text(
                     '\$${mainEngine.todaysExpense.toStringAsFixed(2)}',
                     style: TextStyle(

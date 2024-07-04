@@ -45,7 +45,7 @@ class _HomePageState extends State<HomePage> {
                         bottomRight: Radius.circular(20),
                       ),
                     ),
-                    padding: EdgeInsets.all(16.0),
+                    padding: EdgeInsets.symmetric(vertical: 8.0,horizontal: 16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
