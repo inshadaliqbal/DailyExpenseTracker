@@ -65,7 +65,7 @@ class _HomePageState extends State<HomePage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Welcome Back',
+                                  'Welcome Back. ',
                                   style: TextStyle(
                                     fontSize: 12,
                                     color: Colors.white70,
