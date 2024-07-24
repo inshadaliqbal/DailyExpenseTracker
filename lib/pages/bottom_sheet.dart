@@ -23,7 +23,7 @@ class MyBottomSheetContent extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'Choose an option',
+            'Choose an option ',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -36,7 +36,7 @@ class MyBottomSheetContent extends StatelessWidget {
             children: [
               _buildOptionCard(
                 context,
-                title: 'Income',
+                title: 'Income ',
                 color: Colors.green.shade300,
                 onTap: () {
                   Navigator.pop(context);
