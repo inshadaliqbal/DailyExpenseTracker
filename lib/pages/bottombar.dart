@@ -67,7 +67,7 @@ BottomNavigationBar buildBottomNavigationBarWidget(
           size: 28,
           color: Colors.black,
         ),
-        label: 'Home',
+        label: 'Home ',
       ),
       BottomNavigationBarItem(
         icon: Container(
