@@ -97,7 +97,7 @@ BottomNavigationBar buildBottomNavigationBarWidget(
           size: 28,
           color: Colors.black,
         ),
-        label: 'Statistics',
+        label: 'Statistics ',
       ),
     ],
     currentIndex: selectedIndex,
